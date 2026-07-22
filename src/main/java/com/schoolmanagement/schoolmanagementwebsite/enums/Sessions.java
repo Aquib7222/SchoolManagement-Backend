@@ -1,0 +1,21 @@
+package com.schoolmanagement.schoolmanagementwebsite.enums;
+
+import com.fasterxml.jackson.annotation.JsonValue;
+
+public enum Sessions {
+
+    SESSION_2026_2027("2026-2027"),
+    SESSION_2025_2026("2025-2026"),
+    SESSION_2024_2025("2024-2025");
+
+    private final String value;
+
+    Sessions(String value) {
+        this.value = value;
+    }
+
+    @JsonValue
+    public String getValue() {
+        return value;
+    }
+}

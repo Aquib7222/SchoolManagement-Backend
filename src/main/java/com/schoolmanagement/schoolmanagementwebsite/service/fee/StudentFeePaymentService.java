@@ -77,7 +77,6 @@ public class StudentFeePaymentService {
         response.setFineAmount(request.getFineAmount());
 
         response.setDiscountAmount(request.getDiscountAmount());
-        
 
         response.setBalanceAmount(totalBalance);
 
@@ -210,7 +209,7 @@ public class StudentFeePaymentService {
         payment.setPaidAmount(
                 paidAmount);
 
-                payment.setDueAmount(schedule.getDueAmount());
+        payment.setDueAmount(schedule.getDueAmount());
 
         payment.setFineAmount(
                 request.getFineAmount());
@@ -268,14 +267,11 @@ public class StudentFeePaymentService {
     }
 
 //     public StudentFeePayment getReceipt(String receiptNo) {
-
 //         return paymentRepository
 //                 .findByReceiptNo(receiptNo)
 //                 .orElseThrow(()
 //                         -> new RuntimeException("Receipt Not Found"));
-
 //     }
-
     public List<StudentFeePayment> getScheduleHistory(Long scheduleId) {
 
         return paymentRepository
@@ -286,99 +282,177 @@ public class StudentFeePaymentService {
 
     public Long totalReceiptCount() {
 
-
         return paymentRepository.count();
 
     }
 
     public FeeReceiptResponse getReceipt(String receiptNo) {
 
-    List<StudentFeePayment> payments =
-            paymentRepository.findByReceiptNoOrderByIdAsc(receiptNo);
+        List<StudentFeePayment> payments
+                = paymentRepository.findByReceiptNoOrderByIdAsc(receiptNo);
 
-    if (payments.isEmpty()) {
-        throw new RuntimeException("Receipt Not Found");
+        if (payments.isEmpty()) {
+            throw new RuntimeException("Receipt Not Found");
+        }
+
+        StudentFeePayment first = payments.get(0);
+
+        FeeReceiptResponse response = new FeeReceiptResponse();
+
+        response.setReceiptNo(first.getReceiptNo());
+
+        response.setAdmissionNumber(first.getAdmissionNumber());
+
+        response.setStudentName(first.getStudentName());
+
+        response.setStudentClass(first.getStudentClass());
+
+        response.setSection(first.getSection());
+
+        response.setSession(first.getSession());
+
+        response.setPaymentDate(first.getPaymentDate().toString());
+
+        response.setPaymentTime(first.getPaymentTime().toString());
+
+        response.setPaymentMode(first.getPaymentMode());
+
+        response.setCollectedBy(first.getCollectedBy());
+
+        double total = 0;
+        double paid = 0;
+        double due = 0;
+        double fine = 0;
+        double discount = 0;
+
+        List<FeeReceiptRow> rows = new ArrayList<>();
+
+        for (StudentFeePayment payment : payments) {
+
+            FeeReceiptRow row = new FeeReceiptRow();
+
+            row.setMonth(payment.getMonth());
+
+            row.setFeeCode(payment.getFeeCode());
+
+            row.setFeeName(payment.getFeeName());
+
+            row.setAmount(payment.getAmount());
+
+            row.setPaidAmount(payment.getPaidAmount());
+
+            row.setDueAmount(payment.getDueAmount());
+
+            rows.add(row);
+
+            total += payment.getAmount();
+
+            paid += payment.getPaidAmount();
+
+            due += payment.getDueAmount();
+
+            fine += payment.getFineAmount();
+
+            discount += payment.getDiscountAmount();
+        }
+
+        response.setTotalAmount(total);
+
+        response.setPaidAmount(paid);
+
+        response.setDueAmount(due);
+
+        response.setFineAmount(fine);
+
+        response.setDiscountAmount(discount);
+
+        response.setFeeDetails(rows);
+
+        return response;
     }
 
-    StudentFeePayment first = payments.get(0);
+    @Transactional
+    public String deleteReceipt(String receiptNo, String deletedBy) {
 
-    FeeReceiptResponse response = new FeeReceiptResponse();
+        List<StudentFeePayment> payments
+                = paymentRepository.findByReceiptNoOrderByIdAsc(receiptNo);
 
-    response.setReceiptNo(first.getReceiptNo());
+        if (payments.isEmpty()) {
+            throw new RuntimeException("Receipt Not Found");
+        }
 
-    response.setAdmissionNumber(first.getAdmissionNumber());
+        for (StudentFeePayment payment : payments) {
 
-    response.setStudentName(first.getStudentName());
+            if (Boolean.TRUE.equals(payment.getDeleted())) {
+                continue;
+            }
 
-    response.setStudentClass(first.getStudentClass());
+            StudentFeeSchedule schedule
+                    = scheduleRepository.findById(payment.getScheduleId())
+                            .orElseThrow(()
+                                    -> new RuntimeException("Schedule Not Found"));
 
-    response.setSection(first.getSection());
+            // Rollback Amount
+            double paid
+                    = payment.getPaidAmount() == null ? 0 : payment.getPaidAmount();
 
-    response.setSession(first.getSession());
+            schedule.setPaidAmount(
+                    schedule.getPaidAmount() - paid);
 
-    response.setPaymentDate(first.getPaymentDate().toString());
+            schedule.setDueAmount(
+                    schedule.getDueAmount() + paid);
 
-    response.setPaymentTime(first.getPaymentTime().toString());
+            // Restore Status
+            if (schedule.getPaidAmount() <= 0) {
 
-    response.setPaymentMode(first.getPaymentMode());
+                schedule.setPaidAmount(0.0);
 
-    response.setCollectedBy(first.getCollectedBy());
+                schedule.setStatus("UNPAID");
 
-    double total = 0;
-    double paid = 0;
-    double due = 0;
-    double fine = 0;
-    double discount = 0;
+            } else {
 
-    List<FeeReceiptRow> rows = new ArrayList<>();
+                schedule.setStatus("PARTIAL");
 
-    for (StudentFeePayment payment : payments) {
+            }
 
-        FeeReceiptRow row = new FeeReceiptRow();
+            scheduleRepository.save(schedule);
 
-        row.setMonth(payment.getMonth());
+            // Soft Delete
+            payment.setDeleted(true);
 
-        row.setFeeCode(payment.getFeeCode());
+            payment.setDeletedBy(deletedBy);
 
-        row.setFeeName(payment.getFeeName());
+            payment.setDeletedAt(LocalDateTime.now());
+            payment.setStatus("DELETED");
 
-        row.setAmount(payment.getAmount());
+            paymentRepository.save(payment);
 
-        row.setPaidAmount(payment.getPaidAmount());
+        }
 
-        row.setDueAmount(payment.getDueAmount());
-
-        rows.add(row);
-
-        total += payment.getAmount();
-
-        paid += payment.getPaidAmount();
-
-        due += payment.getDueAmount();
-
-        fine += payment.getFineAmount();
-
-        discount += payment.getDiscountAmount();
+        return "Receipt Deleted Successfully";
     }
 
-    response.setTotalAmount(total);
+    public List<StudentFeePayment> dailyCollectionReport(LocalDate date) {
 
-    response.setPaidAmount(paid);
+        return paymentRepository
+                .findByPaymentDateAndStatusAndDeletedFalseOrderByPaymentTimeAsc(
+                        date,
+                        "SUCCESS"
+                );
+    }
 
-    response.setDueAmount(due);
+    public List<StudentFeePayment> monthlyCollectionReport(
+            int year,
+            int month
+    ) {
 
-    response.setFineAmount(fine);
+        return paymentRepository.monthlyCollectionReport(
+                year,
+                month
+        );
 
-    response.setDiscountAmount(discount);
-
-    response.setFeeDetails(rows);
-
-    return response;
+    }
 }
-}            
-                
-                            
-            
 
 // @Service
 // @RequiredArgsConstructor
@@ -494,9 +568,4 @@ public class StudentFeePaymentService {
 //     return paymentRepository.findByReceiptNo(receiptNo);
 // }
 // }
-                
-                             
-            
-                
-                            
-                
+

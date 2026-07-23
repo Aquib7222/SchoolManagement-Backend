@@ -118,6 +118,12 @@ public class StudentFeePayment {
     // =========================
 
     private String status;
+
+    private Boolean deleted = false;
+
+private String deletedBy;
+
+private LocalDateTime deletedAt;
 }
 
 // package com.schoolmanagement.schoolmanagementwebsite.entity.fee;

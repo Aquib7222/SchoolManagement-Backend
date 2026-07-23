@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.schoolmanagement.schoolmanagementwebsite.enums.FeeBatch;
 import com.schoolmanagement.schoolmanagementwebsite.enums.FeeCategory;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Standard;
+import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Sessions;
 
 @RestController
@@ -28,6 +29,10 @@ public class MasterController {
     @GetMapping("/standard")
     public Standard[] getStandard() {
         return Standard.values();
+    }
+    @GetMapping("/section")
+    public Section[] getSection() {
+        return Section.values();
     }
 
     @GetMapping("/sessions")

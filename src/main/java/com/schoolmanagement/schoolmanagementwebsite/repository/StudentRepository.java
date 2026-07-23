@@ -1,6 +1,7 @@
 package com.schoolmanagement.schoolmanagementwebsite.repository;
 
 import com.schoolmanagement.schoolmanagementwebsite.entity.Admission;
+import com.schoolmanagement.schoolmanagementwebsite.entity.School;
 import com.schoolmanagement.schoolmanagementwebsite.entity.Student;
 import com.schoolmanagement.schoolmanagementwebsite.enums.StudentStatus;
 
@@ -36,6 +37,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             @Param("search") String search
     );
     
+    
     // ✅ Check if student already created for this admission
     boolean existsByAdmission(Admission admission);
 
@@ -51,5 +53,10 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
 Optional<Student> findBySchool_IdAndAdmissionNumber(Long schoolId, String admissionNumber);
 
+Optional<Student> findBySchool_IdAndAcademicYearAndAdmissionNumber(
+        Long schoolId,
+        String academicYear,
+        String admissionNumber
+);
 
 }

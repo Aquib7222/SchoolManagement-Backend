@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.schoolmanagement.schoolmanagementwebsite.entity.School;
 import com.schoolmanagement.schoolmanagementwebsite.entity.Student;
 import com.schoolmanagement.schoolmanagementwebsite.entity.User;
 import com.schoolmanagement.schoolmanagementwebsite.enums.StudentStatus;
 import com.schoolmanagement.schoolmanagementwebsite.repository.StudentRepository;
 import com.schoolmanagement.schoolmanagementwebsite.repository.UserRepository;
+import com.schoolmanagement.schoolmanagementwebsite.repository.SchoolRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,6 +20,7 @@ public class StudentService {
 
     private final StudentRepository studentRepository;
     private final UserRepository userRepository;
+    private final SchoolRepository schoolRepository;
 
     public List<Student> searchStudents(
             String email,
@@ -75,6 +78,7 @@ public class StudentService {
     public Student getStudentByAdmissionNumber(String email, String admissionNumber) {
 
         User user = userRepository.findByEmail(email);
+        System.out.println("Logged in email = " + email);
 
         if (user == null || user.getSchool() == null) {
             throw new RuntimeException("User or School not found");
@@ -87,8 +91,28 @@ public class StudentService {
                 .orElseThrow(() -> new RuntimeException("Student Not Found"));
     }
 
-    
+    public Student getStudentBySessionAndAdmissionNo(
+        String email,
+        String academicYear,
+        String admissionNumber) {
+
+    System.out.println("Logged in email = " + email);
+
+    User user = userRepository.findByEmail(email);
+        System.out.println("Logged in email = " + email);
+
+        if (user == null) {
+            throw new RuntimeException("User or School not found");
+        }
+
+    Long schoolId = user.getSchool().getId();
+
+    return studentRepository
+            .findBySchool_IdAndAcademicYearAndAdmissionNumber(
+                    schoolId,
+                    academicYear,
+                    admissionNumber
+            )
+            .orElseThrow(() -> new RuntimeException("Student not found"));
 }
-                                                    
-                
-                    
+}

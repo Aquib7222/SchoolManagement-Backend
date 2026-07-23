@@ -56,7 +56,23 @@ public class StudentController {
                 search
         );
     }
+   @GetMapping("/session-admission")
+public ResponseEntity<Student> getStudentBySessionAndAdmissionNo(
+        @RequestParam String academicYear,
+        @RequestParam String admissionNumber,
+        Authentication authentication
+) {
 
+    String email = authentication.getName();
+
+    return ResponseEntity.ok(
+            studentService.getStudentBySessionAndAdmissionNo(
+                    email,
+                    academicYear,
+                    admissionNumber
+            )
+    );
+}
     // @GetMapping("/count")
     // public ResponseEntity<Long> getStudentCount(
     //         @RequestParam Long schoolId

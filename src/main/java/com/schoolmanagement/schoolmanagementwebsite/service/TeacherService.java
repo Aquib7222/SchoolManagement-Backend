@@ -1,6 +1,7 @@
 package com.schoolmanagement.schoolmanagementwebsite.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -62,18 +63,20 @@ public class TeacherService {
     }
 
     // ================= UPDATE =================
-        public Teacher updateTeacher(Long id, Teacher updated) {
+        public Teacher updateTeacher(String employeeId,Long schoolId, Teacher updated) {
     
-        Teacher existing = teacherRepo.findById(id);
+        Teacher teacher = teacherRepo
+            .findByEmployeeIdAndSchoolId(employeeId, schoolId)
+            .orElseThrow(() -> new RuntimeException("Teacher not found"));
 
-        existing.setFirstName(updated.getFirstName());
-        existing.setLastName(updated.getLastName());
-        existing.setDepartment(updated.getDepartment());
-        existing.setDesignation(updated.getDesignation());
-        existing.setStatus(updated.getStatus());
-        existing.setMobileNumber(updated.getMobileNumber());
+        teacher.setFirstName(updated.getFirstName());
+        teacher.setLastName(updated.getLastName());
+        teacher.setDepartment(updated.getDepartment());
+        teacher.setDesignation(updated.getDesignation());
+        teacher.setStatus(updated.getStatus());
+        teacher.setMobileNumber(updated.getMobileNumber());
 
-        return teacherRepo.save(existing);
+        return teacherRepo.save(teacher);
     }
 
     // ================= DELETE =================
@@ -112,4 +115,35 @@ public class TeacherService {
 
         teacherRepo.save(teacher);
     }
+
+    public Teacher searchTeachersByEmployeeId(String employeeId, Long schoolId) {
+    return teacherRepo.findTeacherByEmployeeId(employeeId, schoolId);
+
+    
+}
+  public Teacher updateTeacherField(
+        String employeeId,
+        Long schoolId,
+        Map<String, String> updates) {
+
+    Teacher teacher = teacherRepo
+            .findByEmployeeIdAndSchoolId(employeeId, schoolId)
+            .orElseThrow(() -> new RuntimeException("Teacher not found"));
+
+    if (updates.containsKey("department")) {
+        teacher.setDepartment(updates.get("department"));
+    }
+
+    if (updates.containsKey("designation")) {
+        teacher.setDesignation(updates.get("designation"));
+    }
+
+    if (updates.containsKey("category")) {
+        teacher.setCategory(updates.get("category"));
+    }
+
+    return teacherRepo.save(teacher);
+}
+
+
 }

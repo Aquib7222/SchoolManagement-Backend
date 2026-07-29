@@ -10,6 +10,9 @@ import com.schoolmanagement.schoolmanagementwebsite.enums.FeeCategory;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Standard;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Sessions;
+import com.schoolmanagement.schoolmanagementwebsite.enums.TeacherCategory;
+import com.schoolmanagement.schoolmanagementwebsite.enums.TeacherDepartment;
+import com.schoolmanagement.schoolmanagementwebsite.enums.TeacherDesignation;
 
 @RestController
 @RequestMapping("/api/master")
@@ -38,6 +41,21 @@ public class MasterController {
     @GetMapping("/sessions")
     public Sessions[] getSessions() {
         return Sessions.values();
+    }
+
+    @GetMapping("/teacherDesignation")
+    public TeacherDesignation[] getTeacherDesignation(){
+        return TeacherDesignation.values();
+    }
+
+    @GetMapping("/teacherDepartment")
+    public TeacherDepartment[] getTeacherDepartment(){
+        return TeacherDepartment.values();
+    }
+
+    @GetMapping("/teacherCategory")
+    public TeacherCategory[] getTeacherCategory(){
+        return TeacherCategory.values();
     }
 
 

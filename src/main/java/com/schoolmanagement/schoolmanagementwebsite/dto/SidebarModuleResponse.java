@@ -10,6 +10,7 @@ public class SidebarModuleResponse {
     private String icon;
     private String path;
     private String image;
+    private String sequenceNumber;
 
 
 
@@ -64,4 +65,13 @@ public void setImage(String image) {
     public void setSubMenus(List<SidebarMenuResponse> subMenus) {
         this.subMenus = subMenus;
     }
+
+    public String getSequenceNumber() {
+        return sequenceNumber;
+    }
+
+    public void setSequenceNumber(String sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
+    }
+   
 }

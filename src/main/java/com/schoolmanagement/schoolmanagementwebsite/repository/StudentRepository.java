@@ -36,6 +36,46 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             @Param("section") String section,
             @Param("search") String search
     );
+
+    @Query("""
+SELECT s FROM Student s
+WHERE s.school.id = :schoolId
+AND s.academicYear = :academicYear
+
+AND (:admissionNumber IS NULL OR :admissionNumber='' OR
+     s.admissionNumber LIKE CONCAT('%',:admissionNumber,'%'))
+
+AND (:studentName IS NULL OR :studentName='' OR
+     LOWER(s.firstName) LIKE LOWER(CONCAT('%',:studentName,'%'))
+     OR LOWER(s.lastName) LIKE LOWER(CONCAT('%',:studentName,'%')))
+
+AND (:fatherName IS NULL OR :fatherName='' OR
+     LOWER(s.fatherName) LIKE LOWER(CONCAT('%',:fatherName,'%')))
+
+AND (:motherName IS NULL OR :motherName='' OR
+     LOWER(s.motherName) LIKE LOWER(CONCAT('%',:motherName,'%')))
+
+AND (:mobile IS NULL OR :mobile='' OR
+     s.mobile LIKE CONCAT('%',:mobile,'%'))
+
+AND (:studentClass IS NULL OR :studentClass='' OR
+     s.studentClass = :studentClass)
+
+AND (:section IS NULL OR :section='' OR
+     s.section = :section)
+
+""")
+List<Student> searchStudentDetails(
+        @Param("schoolId") Long schoolId,
+        @Param("academicYear") String academicYear,
+        @Param("admissionNumber") String admissionNumber,
+        @Param("studentName") String studentName,
+        @Param("fatherName") String fatherName,
+        @Param("motherName") String motherName,
+        @Param("mobile") String mobile,
+        @Param("studentClass") String studentClass,
+        @Param("section") String section
+);
     
     
     // ✅ Check if student already created for this admission

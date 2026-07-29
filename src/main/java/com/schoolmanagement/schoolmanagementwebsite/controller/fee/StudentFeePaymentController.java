@@ -47,8 +47,16 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.schoolmanagement.schoolmanagementwebsite.dto.fee.FeePaymentRequest;
 import com.schoolmanagement.schoolmanagementwebsite.dto.fee.FeePaymentResponse;
@@ -128,15 +136,15 @@ public class StudentFeePaymentController {
     }
 
     @GetMapping("/report/monthly")
-public ResponseEntity<List<StudentFeePayment>> monthlyReport(
-        @RequestParam int year,
-        @RequestParam int month
-) {
+    public ResponseEntity<List<StudentFeePayment>> monthlyReport(
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
 
-    return ResponseEntity.ok(
-            paymentService.monthlyCollectionReport(year, month)
-    );
+        return ResponseEntity.ok(
+                paymentService.monthlyCollectionReport(year, month)
+        );
 
-}
+    }
 
 }

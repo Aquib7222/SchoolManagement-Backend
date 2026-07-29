@@ -138,6 +138,7 @@ import org.springframework.security.config.Customizer;
 //         return http.build();
 //     }
 // }
+
 @Configuration
 public class SecurityConfig {
 
@@ -171,29 +172,7 @@ public class SecurityConfig {
         return authBuilder.build();
     }
 
-    // @Bean
-    // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    //     http
-    //         .csrf(cs -> cs.disable())
-    //         .authorizeHttpRequests(auth -> auth
-    //             .requestMatchers("/auth/login").permitAll()
-    //             .requestMatchers("/auth/register").permitAll()
-    //             .requestMatchers("/api/school/**").permitAll()
-    //             .requestMatchers("/api/superadmin/**").permitAll()
-    //             .requestMatchers("/api/admissions/**").permitAll()
-    //             .requestMatchers("/api/students/**").permitAll()
-    //             .requestMatchers("/api/documents/**").permitAll()
-    //             .requestMatchers("/api/admission-fee/**").permitAll()
-    //             .requestMatchers("/api/sections/**").permitAll()
-    //             .requestMatchers("/api/teachers/**").permitAll()
-    //             .requestMatchers("/api/teacher-attendance/**").permitAll()
-    //             .requestMatchers("/api/module/**").permitAll()
-    //             .anyRequest().authenticated()
-    //         )
-    //         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-    //         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-    //     return http.build();
-    // }
+ 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 

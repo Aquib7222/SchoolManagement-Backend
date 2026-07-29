@@ -67,6 +67,31 @@ public class Teacher {
     private String aadharNumber;
     private String pfNumber;
 
+    // medical Insurance Claim Details 
+    private String maritalStatus;
+    private String spouseName;
+    private String spouseGender;
+    private String spouseDob;
+
+    // Religious Details 
+    private String religion;
+    private String caste;
+
+    // qualification Details 
+    private String qualifiation;
+    private String universityBoard;
+    private String passingYear;
+    private String percentage;
+    
+
+    //experience Details
+    private String companyName;
+    private String companyDesignation;
+    private String startDate;
+    private String endDate;
+    private String totalExperience;
+
+
     @Lob
     @Column(columnDefinition = "LONGTEXT")
     private String photo;

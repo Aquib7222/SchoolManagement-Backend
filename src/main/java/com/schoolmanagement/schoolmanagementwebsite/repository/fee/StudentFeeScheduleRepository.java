@@ -28,4 +28,13 @@ public interface StudentFeeScheduleRepository
             Long studentFeeId,
             String month
     );
+//     List<StudentFeeSchedule> findByAll(String status);
+
+//     List<StudentFeeSchedule> findAll(String status);
+
+//     public static class findAll {
+
+//         public findAll() {
+//         }
+//     }
 }

@@ -303,6 +303,7 @@ import com.schoolmanagement.schoolmanagementwebsite.repository.*;
             moduleDto.setIcon(module.getIcon());
             moduleDto.setPath(module.getPath());
             moduleDto.setImage(module.getImage());
+            moduleDto.setSequenceNumber(module.getSequenceNumber());
 
             List<SidebarMenuResponse> menus = new ArrayList<>();
 

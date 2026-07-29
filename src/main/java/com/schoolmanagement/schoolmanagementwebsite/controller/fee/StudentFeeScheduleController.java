@@ -3,7 +3,13 @@ package com.schoolmanagement.schoolmanagementwebsite.controller.fee;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.schoolmanagement.schoolmanagementwebsite.dto.fee.GenerateFeeRequest;
 import com.schoolmanagement.schoolmanagementwebsite.entity.fee.StudentFee;
@@ -30,6 +36,15 @@ public class StudentFeeScheduleController {
 
         return ResponseEntity.ok("Fee Generated Successfully");
     }
+    // =====================================
+    // Get Fee Schedule 
+    // =====================================
+
+    @GetMapping("/all")
+    public ResponseEntity<List<StudentFeeSchedule>> getAll(){
+        return ResponseEntity.ok(studentFeeScheduleService.getAll());
+    }
+
 
     // =====================================
     // Student Current Schedule

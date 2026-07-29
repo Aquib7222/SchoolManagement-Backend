@@ -120,6 +120,10 @@ public class StudentFeeScheduleService {
         }
     }
 
+     public List<StudentFeeSchedule> getAll(){
+        return studentFeeScheduleRepository.findAll();
+    }
+
     // ===========================
     // Due Date
     // ===========================
@@ -150,6 +154,8 @@ public class StudentFeeScheduleService {
 
         return studentFeeRepository.findByAdmissionNumber(admissionNumber);
 
+        
     }
+   
 
 }

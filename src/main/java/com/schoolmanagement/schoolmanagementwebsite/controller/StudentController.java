@@ -1,15 +1,21 @@
 package com.schoolmanagement.schoolmanagementwebsite.controller;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.schoolmanagement.schoolmanagementwebsite.entity.Student;
 import com.schoolmanagement.schoolmanagementwebsite.repository.StudentRepository;
@@ -56,31 +62,55 @@ public class StudentController {
                 search
         );
     }
-   @GetMapping("/session-admission")
-public ResponseEntity<Student> getStudentBySessionAndAdmissionNo(
-        @RequestParam String academicYear,
-        @RequestParam String admissionNumber,
-        Authentication authentication
-) {
 
-    String email = authentication.getName();
+    @PutMapping(
+            value = "/{admissionNumber}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<Student> updateStudent(
+            @PathVariable String admissionNumber,
+            @RequestPart("student") Student request,
+            @RequestPart(value = "photo", required = false) MultipartFile photo,
+            Authentication authentication
+    ) {
+        
 
-    return ResponseEntity.ok(
-            studentService.getStudentBySessionAndAdmissionNo(
+        String email = authentication.getName();
+
+        Student student = null;
+        try {
+            student = studentService.updateStudent(
                     email,
-                    academicYear,
-                    admissionNumber
-            )
-    );
-}
-    // @GetMapping("/count")
-    // public ResponseEntity<Long> getStudentCount(
-    //         @RequestParam Long schoolId
-    // ) {
-    //     return ResponseEntity.ok(
-    //             studentService.getTotalStudents(schoolId)
-    //     );
-    // }
+                    admissionNumber,
+                    request,
+                    photo
+            );
+            
+        } catch (IOException ex) {
+            System.getLogger(StudentController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+
+        return ResponseEntity.ok(student);
+    }
+
+    @GetMapping("/session-admission")
+    public ResponseEntity<Student> getStudentBySessionAndAdmissionNo(
+            @RequestParam String academicYear,
+            @RequestParam String admissionNumber,
+            Authentication authentication
+    ) {
+
+        String email = authentication.getName();
+
+        return ResponseEntity.ok(
+                studentService.getStudentBySessionAndAdmissionNo(
+                        email,
+                        academicYear,
+                        admissionNumber
+                )
+        );
+    }
+
     @GetMapping("/count")
     public long getStudentCount(
             @RequestParam(required = false) Long schoolId
@@ -91,6 +121,7 @@ public ResponseEntity<Student> getStudentBySessionAndAdmissionNo(
         return studentRepo.count();
     }
 
+    // get active students count 
     @GetMapping("/count/active")
     public ResponseEntity<Long> getActiveStudentCount(
             @RequestParam Long schoolId
@@ -99,12 +130,8 @@ public ResponseEntity<Student> getStudentBySessionAndAdmissionNo(
                 studentService.getActiveStudents(schoolId)
         );
     }
-    // // ✅ Total students (ALL)
-    // @GetMapping("/counts")
-    // public ResponseEntity<Long> getTotalStudents() {
-    //     return ResponseEntity.ok(studentService.getTotalStudents());
-    // }
 
+    // get student by admission Number 
     @GetMapping("/{admissionNumber}")
     public ResponseEntity<Student> getStudent(
             @PathVariable String admissionNumber,
@@ -114,6 +141,33 @@ public ResponseEntity<Student> getStudentBySessionAndAdmissionNo(
 
         return ResponseEntity.ok(
                 studentService.getStudentByAdmissionNumber(email, admissionNumber)
+        );
+    }
+
+    // get student by many parameter 
+    @GetMapping("/all")
+    public List<Student> searchStudentDetails(
+            @RequestParam String academicYear,
+            @RequestParam(required = false) String admissionNumber,
+            @RequestParam(required = false) String studentName,
+            @RequestParam(required = false) String fatherName,
+            @RequestParam(required = false) String motherName,
+            @RequestParam(required = false) String mobile,
+            @RequestParam(required = false) String studentClass,
+            @RequestParam(required = false) String section,
+            Authentication authentication
+    ) {
+
+        return studentService.searchStudentDetails(
+                authentication.getName(),
+                academicYear,
+                admissionNumber,
+                studentName,
+                fatherName,
+                motherName,
+                mobile,
+                studentClass,
+                section
         );
     }
 }

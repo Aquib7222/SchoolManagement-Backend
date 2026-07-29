@@ -71,6 +71,9 @@ public class Student {
 
     private String academicYear;
 
+    @Column(name = "photo")
+private String photo;
+
     @ManyToOne
     @JoinColumn(name = "school_id")
     private School school;
@@ -87,5 +90,7 @@ public class Student {
 
      @Enumerated(EnumType.STRING)
     private Section section;   
+
+    
 
 }

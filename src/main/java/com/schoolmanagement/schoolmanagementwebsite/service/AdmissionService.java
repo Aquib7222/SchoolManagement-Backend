@@ -59,13 +59,10 @@
 //     }
 // // }
 // package com.schoolmanagement.schoolmanagementwebsite.service;
-
 // import java.time.LocalDateTime;
 // import java.util.List;
-
 // import org.springframework.stereotype.Service;
 // import org.springframework.transaction.annotation.Transactional;
-
 // import com.schoolmanagement.schoolmanagementwebsite.dto.AdmissionRequest;
 // import com.schoolmanagement.schoolmanagementwebsite.entity.Admission;
 // import com.schoolmanagement.schoolmanagementwebsite.entity.AdmissionStatus;
@@ -79,43 +76,33 @@
 // import com.schoolmanagement.schoolmanagementwebsite.repository.SchoolRepository;
 // import com.schoolmanagement.schoolmanagementwebsite.repository.StudentRepository;
 // import com.schoolmanagement.schoolmanagementwebsite.repository.UserRepository;
-
 // import lombok.RequiredArgsConstructor;
-
 // @Service
 // @RequiredArgsConstructor
 // public class AdmissionService {
-
 //     private final AdmissionRepository admissionRepository;
 //     private final StudentRepository studentRepository;
 //     private final SchoolRepository schoolRepository; // Inject SchoolRepository
 //     private final UserRepository userRepository;
-
 //     private final AdmissionStatusRepository admissionStatusRepository;
 //     private final AdmissionStatusHistoryRepository statusHistoryRepository;
-
 //     public String generateAdmissionNumber() {
 //         long count = admissionRepository.count() + 1;
 //         return "ADM" + String.format("%05d", count);
 //     }
-
 //     @Transactional
 //     public Admission createAdmission(AdmissionRequest request, String email) {
-
 //         // 1️⃣ Fetch School first
 //         User user = userRepository.findByEmail(email);
 //         if (user == null) {
 //             throw new RuntimeException("User not found: " + email);
 //         }
-
 //         School school = user.getSchool(); // ✅ LOGGED-IN user's school
-
 //         if (school == null) {
 //             throw new RuntimeException("User is not linked with any school");
 //         }
 //         // 2️⃣ Generate unique admission number
 //         String admissionNo = generateAdmissionNumber();
-
 //       AdmissionStatus appliedStatus =
 //     admissionStatusRepository.findByNameIgnoreCase("APPLIED")
 //     .orElseGet(() -> {
@@ -123,8 +110,6 @@
 //         status.setName("APPLIED");
 //         return admissionStatusRepository.save(status);
 //     });
-
-
 //         // 3️⃣ Create Admission entity
 //         Admission admission = Admission.builder()
 //                 .admissionNumber(admissionNo)
@@ -171,9 +156,7 @@
 //                 .school(school) // ✅ link School here
 //                 .status(appliedStatus)   // ✅ FIX HERE
 //                 .build();
-
 //         Admission savedAdmission = admissionRepository.save(admission);
-
 //         // 4️⃣ Create Student automatically
 //         Student student = Student.builder()
 //                 .admissionNumber(savedAdmission.getAdmissionNumber())
@@ -191,68 +174,52 @@
 //                 .address(savedAdmission.getHouseNo() + ", " + savedAdmission.getStreet() + ", " + savedAdmission.getCity())
 //                 .school(school) // ✅ link the same school
 //                 .admission(savedAdmission)
-                
 //                 .build();
-
 //         studentRepository.save(student);
-
 //         return savedAdmission;
 //     }
-
 //     public Admission updateAdmission(Long id, Admission updatedAdmission) {
 //         Admission existing = admissionRepository.findById(id)
 //                 .orElseThrow(() -> new RuntimeException("Admission not found"));
-
 //         existing.setFirstName(updatedAdmission.getFirstName());
 //         existing.setLastName(updatedAdmission.getLastName());
 //         existing.setAcademicYear(updatedAdmission.getAcademicYear());
 //         existing.setStudentClass(updatedAdmission.getStudentClass());
 //         existing.setAcademicType(updatedAdmission.getAcademicType());
 //         existing.setToday(updatedAdmission.getToday());
-
 //         return admissionRepository.save(existing);
 //     }
-
 //     // ✅ DELETE
 //     public void deleteAdmission(Long id) {
 //         if (!admissionRepository.existsById(id)) {
 //             throw new RuntimeException("Admission not found");
 //         }
 //         admissionRepository.deleteById(id);
-
 //     }
-
 //     public List<Admission> getAllAdmissions() {
 //         return admissionRepository.findAll();
 //     }
-
 //     // update admission
 //     @Transactional
 //     public void updateAdmissionStatus(
 //             Long admissionId,
 //             String newStatusName,
 //             String changedBy) {
-
 //         Admission admission = admissionRepository.findById(admissionId)
 //                 .orElseThrow(() -> new RuntimeException("Admission not found"));
-
 //         AdmissionStatus newStatus = admissionStatusRepository
 //                 .findByName(newStatusName.toUpperCase())
 //                 .orElseThrow(() -> new RuntimeException("Invalid status"));
-
 //         AdmissionStatus oldStatus = admission.getStatus();
-
 //         // 🔒 Simple rule
 //         if (oldStatus != null
 //                 && (oldStatus.getName().equals("APPROVED")
 //                 || oldStatus.getName().equals("REJECTED"))) {
 //             throw new RuntimeException("Status cannot be changed");
 //         }
-
 //         // Update admission
 //         admission.setStatus(newStatus);
 //         admissionRepository.save(admission);
-
 //         // Save history
 //        AdmissionStatusHistory history = new AdmissionStatusHistory();
 // history.setAdmission(savedAdmission);
@@ -260,22 +227,14 @@
 // history.setNewStatus(appliedStatus);
 // history.setChangedBy(email);
 // history.setChangedAt(LocalDateTime.now());
-
 // statusHistoryRepository.save(history);
-
 //     }
-
 // }
-
-
 // package com.schoolmanagement.schoolmanagementwebsite.service;
-
 // import java.time.LocalDateTime;
 // import java.util.List;
-
 // import org.springframework.stereotype.Service;
 // import org.springframework.transaction.annotation.Transactional;
-
 // import com.schoolmanagement.schoolmanagementwebsite.dto.AdmissionRequest;
 // import com.schoolmanagement.schoolmanagementwebsite.entity.Admission;
 // import com.schoolmanagement.schoolmanagementwebsite.entity.AdmissionStatus;
@@ -289,42 +248,31 @@
 // import com.schoolmanagement.schoolmanagementwebsite.repository.SchoolRepository;
 // import com.schoolmanagement.schoolmanagementwebsite.repository.StudentRepository;
 // import com.schoolmanagement.schoolmanagementwebsite.repository.UserRepository;
-
 // import lombok.RequiredArgsConstructor;
-
 // @Service
 // @RequiredArgsConstructor
 // public class AdmissionService {
-
 //     private final AdmissionRepository admissionRepository;
 //     private final StudentRepository studentRepository;
 //     private final SchoolRepository schoolRepository;
 //     private final UserRepository userRepository;
-
 //     private final AdmissionStatusRepository admissionStatusRepository;
 //     private final AdmissionStatusHistoryRepository statusHistoryRepository;
-
 //     // 🔹 Generate Admission Number
 //     public String generateAdmissionNumber(long schoolId) {
 //         long count = admissionRepository.countBySchool_Id(schoolId) + 1;
 //         return "ADM" + String.format("%05d", count);
 //     }
-
 //     // =====================================================
 //     // ✅ CREATE ADMISSION (DEFAULT STATUS = APPLIED)
 //     // =====================================================
 //    @Transactional
 // public Admission createAdmission(AdmissionRequest request, String email) {
-
 //     User user = userRepository.findByEmail(email);
 //     if (user == null) throw new RuntimeException("User not found");
-
 //     School school = user.getSchool();
 //     if (school == null) throw new RuntimeException("No school linked");
-
 //     String admissionNo = generateAdmissionNumber(school.getId());
-
-
 //     com.schoolmanagement.schoolmanagementwebsite.enums.AdmissionStatus appliedStatus =
 //             admissionStatusRepository.findByNameIgnoreCase("APPLIED")
 //                     .orElseGet(() -> {
@@ -332,7 +280,6 @@
 //                         s.setName("APPLIED");
 //                         return admissionStatusRepository.save(s);
 //                     });
-
 //             Admission admission = Admission.builder()
 //                 .admissionNumber(admissionNo)
 //                 .academicYear(request.getAcademicYear())
@@ -379,7 +326,6 @@
 //                 .status(appliedStatus)   // ✅ FIX HERE
 //                 .build();
 //     Admission saved = admissionRepository.save(admission);
-
 //     // ✅ STATUS HISTORY
 //     AdmissionStatusHistory history = new AdmissionStatusHistory();
 //     history.setAdmission(saved);
@@ -387,32 +333,24 @@
 //     history.setNewStatus(appliedStatus);
 //     history.setChangedBy(email);
 //     history.setChangedAt(LocalDateTime.now());
-
 //     statusHistoryRepository.save(history);
-
 //     // ❌ NO STUDENT CREATION HERE
 //     return saved;
 // }
-
-
 //     // =====================================================
 //     // ✅ UPDATE BASIC ADMISSION DETAILS
 //     // =====================================================
 //     public Admission updateAdmission(Long id, Admission updatedAdmission) {
-
 //         Admission existing = admissionRepository.findById(id)
 //                 .orElseThrow(() -> new RuntimeException("Admission not found"));
-
 //         existing.setFirstName(updatedAdmission.getFirstName());
 //         existing.setLastName(updatedAdmission.getLastName());
 //         existing.setAcademicYear(updatedAdmission.getAcademicYear());
 //         existing.setStudentClass(updatedAdmission.getStudentClass());
 //         existing.setAcademicType(updatedAdmission.getAcademicType());
 //         existing.setToday(updatedAdmission.getToday());
-
 //         return admissionRepository.save(existing);
 //     }
-
 //     // =====================================================
 //     // ✅ UPDATE ADMISSION STATUS (APPROVED / REJECTED)
 //     // =====================================================
@@ -421,19 +359,14 @@
 //         Long admissionId,
 //         String newStatusName,
 //         String changedBy) {
-
 //     Admission admission = admissionRepository.findById(admissionId)
 //             .orElseThrow(() -> new RuntimeException("Admission not found"));
-
 //     AdmissionStatus newStatus = admissionStatusRepository
 //             .findByNameIgnoreCase(newStatusName)
 //             .orElseThrow(() -> new RuntimeException("Invalid status"));
-
 //     AdmissionStatus oldStatus = admission.getStatus();
-
 //     admission.setStatus(newStatus);
 //     admissionRepository.save(admission);
-
 //     // ✅ Save history
 //     AdmissionStatusHistory history = new AdmissionStatusHistory();
 //     history.setAdmission(admission);
@@ -442,18 +375,14 @@
 //     history.setChangedBy(changedBy);
 //     history.setChangedAt(LocalDateTime.now());
 //     statusHistoryRepository.save(history);
-
 //     // 🔥 CREATE STUDENT ONLY IF APPROVED
 //     if ("APPROVED".equalsIgnoreCase(newStatus.getName())) {
 //         createStudentFromAdmission(admission);
 //     }
 // }
-
 // private void createStudentFromAdmission(Admission admission) {
-
 //     // prevent duplicate student
 //     if (admission.getStudent() != null) return;
-
 //     Student student = Student.builder()
 //             .admissionNumber(admission.getAdmissionNumber())
 //             .academicYear(admission.getAcademicYear())
@@ -464,14 +393,9 @@
 //             .email(admission.getEmail())
 //             .school(admission.getSchool())
 //             .admission(admission)
-            
 //             .build();
-
 //     studentRepository.save(student);
 // }
-
-
-
 //     // =====================================================
 //     // ✅ DELETE ADMISSION
 //     // =====================================================
@@ -481,7 +405,6 @@
 //         }
 //         admissionRepository.deleteById(id);
 //     }
-
 //     // =====================================================
 //     // ✅ GET ALL ADMISSIONS
 //     // =====================================================
@@ -489,7 +412,6 @@
 //         return admissionRepository.findAll();
 //     }
 // }
-
 package com.schoolmanagement.schoolmanagementwebsite.service;
 
 import java.util.List;
@@ -510,28 +432,22 @@ import lombok.RequiredArgsConstructor;
 // @Service
 // @RequiredArgsConstructor
 // public class AdmissionService {
-
 //     private final AdmissionRepository admissionRepository;
 //     private final UserRepository userRepository;
-
 //     // 🔹 Generate Admission Number
 //     public String generateAdmissionNumber(long schoolId) {
 //         long count = admissionRepository.countBySchool_Id(schoolId) + 1;
 //         return "ADM" + String.format("%05d", count);
 //     }
-
 //     // =====================================================
 //     // ✅ CREATE ADMISSION (STATUS = APPLIED)
 //     // =====================================================
 //     @Transactional
 //     public Admission createAdmission(AdmissionRequest request, String email) {
-
 //         User user = userRepository.findByEmail(email);
 //         if (user == null) throw new RuntimeException("User not found");
-
 //         School school = user.getSchool();
 //         if (school == null) throw new RuntimeException("No school linked");
-
 //         Admission admission = Admission.builder()
 //                 .admissionNumber(generateAdmissionNumber(school.getId()))
 //                 .academicYear(request.getAcademicYear())
@@ -543,28 +459,22 @@ import lombok.RequiredArgsConstructor;
 //                 .school(school)
 //                 .status(AdmissionStatus.APPLIED) // ✅ ENUM
 //                 .build();
-
 //         return admissionRepository.save(admission);
 //     }
-
 //     // =====================================================
 //     // ✅ UPDATE STATUS (APPROVED / REJECTED)
 //     // =====================================================
 //     @Transactional
 //     public void updateAdmissionStatus(Long admissionId, AdmissionStatus status) {
-
 //         Admission admission = admissionRepository.findById(admissionId)
 //                 .orElseThrow(() -> new RuntimeException("Admission not found"));
-
 //         admission.setStatus(status);
 //         admissionRepository.save(admission);
 //     }
-
 //     public List<Admission> getAllAdmissions() {
 //         return admissionRepository.findAll();
 //     }
 // }
-
 @Service
 @RequiredArgsConstructor
 public class AdmissionService {
@@ -585,10 +495,14 @@ public class AdmissionService {
     public Admission createAdmission(AdmissionRequest request, String email) {
 
         User user = userRepository.findByEmail(email);
-        if (user == null) throw new RuntimeException("User not found");
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
         School school = user.getSchool();
-        if (school == null) throw new RuntimeException("No school linked");
+        if (school == null) {
+            throw new RuntimeException("No school linked");
+        }
 
         Admission admission = Admission.builder()
                 .admissionNumber(generateAdmissionNumber(school.getId()))
@@ -644,10 +558,8 @@ public class AdmissionService {
     // =====================================================
     // @Transactional
     // public Admission updateAdmission(Long id, Admission updatedAdmission) {
-
     //     Admission admission = admissionRepository.findById(id)
     //             .orElseThrow(() -> new RuntimeException("Admission not found"));
-
     //     // Update only allowed fields
     //     admission.setFirstName(updatedAdmission.getFirstName());
     //     admission.setLastName(updatedAdmission.getLastName());
@@ -655,11 +567,9 @@ public class AdmissionService {
     //     admission.setAcademicYear(updatedAdmission.getAcademicYear());
     //     admission.setAcademicType(updatedAdmission.getAcademicType());
     //     admission.setEmail(updatedAdmission.getEmail());
-
     //     return admissionRepository.save(admission);
     // }
-        
-        public Admission updateAdmission(Long id, Admission request) {
+    public Admission updateAdmission(Long id, Admission request) {
 
         Admission existing = admissionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Admission not found"));
@@ -708,22 +618,16 @@ public class AdmissionService {
         // 🔹 Images (Base64 safe)
         // if (request.getStudentImage() != null)
         //     existing.setStudentImage(request.getStudentImage());
-
         // if (request.getFatherImage() != null)
         //     existing.setFatherImage(request.getFatherImage());
-
         // if (request.getMotherImage() != null)
         //     existing.setMotherImage(request.getMotherImage());
-
         // if (request.getGuardianImage() != null)
         //     existing.setGuardianImage(request.getGuardianImage());
-
         // ❌ DO NOT update STATUS here
         // ❌ DO NOT update ID
-
         return admissionRepository.save(existing);
     }
-
 
     // =====================================================
     // ✅ UPDATE STATUS (APPLIED / APPROVED / REJECTED)
@@ -741,9 +645,37 @@ public class AdmissionService {
     public List<Admission> getAllAdmissions() {
         return admissionRepository.findAll();
     }
-    public Admission getAdmissionById(Long id) {
-    return admissionRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Admission not found with id: " + id));
-}
 
-}
+    public Admission getAdmissionById(Long id) {
+        return admissionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Admission not found with id: " + id));
+    }
+
+    public List<Admission> searchAdmissions(
+            Long schoolId,
+            String academicYear,
+            String admissionNumber,
+            String studentClass
+            ) {
+
+        return admissionRepository.searchAdmissions(
+                schoolId,
+                academicYear == null || academicYear.isBlank() ? null : academicYear,
+                admissionNumber == null || admissionNumber.isBlank() ? null : admissionNumber,
+                studentClass == null || studentClass.isBlank() ? null : studentClass
+                
+        );
+    }
+
+    
+            
+            
+}       
+            
+                    
+                
+                
+                
+                
+                
+            

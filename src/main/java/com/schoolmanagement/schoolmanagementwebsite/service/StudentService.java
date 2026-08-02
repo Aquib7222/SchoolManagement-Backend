@@ -11,13 +11,14 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.schoolmanagement.schoolmanagementwebsite.entity.School;
 import com.schoolmanagement.schoolmanagementwebsite.entity.Student;
 import com.schoolmanagement.schoolmanagementwebsite.entity.User;
+import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
+import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 import com.schoolmanagement.schoolmanagementwebsite.enums.StudentStatus;
+import com.schoolmanagement.schoolmanagementwebsite.repository.SchoolRepository;
 import com.schoolmanagement.schoolmanagementwebsite.repository.StudentRepository;
 import com.schoolmanagement.schoolmanagementwebsite.repository.UserRepository;
-import com.schoolmanagement.schoolmanagementwebsite.repository.SchoolRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,7 +34,7 @@ public class StudentService {
             String email,
             String academicYear,
             String studentClass,
-            String section,
+            Section section,
             String search
     ) {
 
@@ -163,12 +164,12 @@ public class StudentService {
     ) throws IOException {
 
         System.out.println("========== UPDATE REQUEST ==========");
-System.out.println("Request First Name : " + request.getFirstName());
-System.out.println("Request Last Name  : " + request.getLastName());
-System.out.println("Request Mobile     : " + request.getMobile());
-System.out.println("Request Email      : " + request.getEmail());
-System.out.println("Request Class      : " + request.getStudentClass());
-System.out.println("====================================");
+        System.out.println("Request First Name : " + request.getFirstName());
+        System.out.println("Request Last Name  : " + request.getLastName());
+        System.out.println("Request Mobile     : " + request.getMobile());
+        System.out.println("Request Email      : " + request.getEmail());
+        System.out.println("Request Class      : " + request.getStudentClass());
+        System.out.println("====================================");
 
         User user = userRepository.findByEmail(email);
         // System.out.println("Logged in email = " + email);
@@ -272,21 +273,20 @@ System.out.println("====================================");
         }
 
         System.out.println("========== BEFORE SAVE ==========");
-System.out.println("Student First Name : " + student.getFirstName());
-System.out.println("Student Last Name  : " + student.getLastName());
-System.out.println("Student Mobile     : " + student.getMobile());
-System.out.println("Student Email      : " + student.getEmail());
-System.out.println("=================================");
+        System.out.println("Student First Name : " + student.getFirstName());
+        System.out.println("Student Last Name  : " + student.getLastName());
+        System.out.println("Student Mobile     : " + student.getMobile());
+        System.out.println("Student Email      : " + student.getEmail());
+        System.out.println("=================================");
 
         // return studentRepository.save(student);
-
         Student savedStudent = studentRepository.save(student);
 
-System.out.println("========== AFTER SAVE ==========");
-System.out.println("ID : " + savedStudent.getId());
-System.out.println("First Name : " + savedStudent.getFirstName());
-System.out.println("Email : " + savedStudent.getEmail());
+        System.out.println("========== AFTER SAVE ==========");
+        System.out.println("ID : " + savedStudent.getId());
+        System.out.println("First Name : " + savedStudent.getFirstName());
+        System.out.println("Email : " + savedStudent.getEmail());
 
-return savedStudent;
+        return savedStudent;
     }
 }

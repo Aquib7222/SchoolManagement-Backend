@@ -12,6 +12,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
@@ -33,7 +35,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             @Param("schoolId") Long schoolId,
             @Param("academicYear") String academicYear,
             @Param("studentClass") String studentClass,
-            @Param("section") String section,
+            @Param("section") Section section,
             @Param("search") String search
     );
 
@@ -99,4 +101,10 @@ Optional<Student> findBySchool_IdAndAcademicYearAndAdmissionNumber(
         String admissionNumber
 );
 
+List<Student> findBySchool_IdAndAcademicYearAndStudentClassAndSection(
+        Long schoolId,
+        String academicYear,
+        String studentClass,
+        Section section
+);
 }

@@ -39,27 +39,7 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
-//     @PostMapping("/login")
-// public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-//     try {
-//         authManager.authenticate(
-//             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-//         );
-//         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-//         String token = jwtService.generateToken(userDetails);
-//         User dbUser = userRepository.findByEmail(request.getEmail());
-//         LoginResponse response = new LoginResponse(
-//             token,
-//             dbUser.getRole(),
-//             dbUser.getEmail()
-//             // dbUser.getSchoolId()
-//         );
-//         return ResponseEntity.ok(response);
-//     } catch (Exception e) {
-//     e.printStackTrace();   // <<< ADD THIS
-//     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-// }
-// }
+
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         try {

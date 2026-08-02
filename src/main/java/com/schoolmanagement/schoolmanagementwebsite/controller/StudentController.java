@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.schoolmanagement.schoolmanagementwebsite.entity.Student;
+import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 import com.schoolmanagement.schoolmanagementwebsite.repository.StudentRepository;
 import com.schoolmanagement.schoolmanagementwebsite.service.StudentService;
 
@@ -48,7 +48,7 @@ public class StudentController {
     public List<Student> searchStudents(
             @RequestParam(required = false) String academicYear,
             @RequestParam(required = false) String studentClass,
-            @RequestParam(required = false) String section,
+            @RequestParam(required = false) Section section,
             @RequestParam(required = false) String search,
             Authentication authentication
     ) {

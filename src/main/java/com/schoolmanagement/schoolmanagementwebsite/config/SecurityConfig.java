@@ -199,6 +199,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/fee-master/**").permitAll()
                 .requestMatchers("/api/fee-structure/**").permitAll()
                 .requestMatchers("/api/student-fee/**").permitAll()
+                .requestMatchers("/api/student/attendance/**").permitAll()
                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

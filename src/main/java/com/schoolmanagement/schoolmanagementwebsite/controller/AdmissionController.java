@@ -30,17 +30,12 @@ import lombok.RequiredArgsConstructor;
 // @RequiredArgsConstructor
 // @CrossOrigin(origins = "http://localhost:5173")
 // public class AdmissionController {
-
 //     private final AdmissionService admissionService;
-
 //     private final AdmissionStatusHistoryRepository statusHistoryRepository;
-
 //     private final AdmissionRepository admissionRepository;
-
 //     // @PostMapping
 //     // public ResponseEntity<Admission> createAdmission(
 //     //         @RequestBody AdmissionRequest request) {
-
 //     //     Admission admission = admissionService.createAdmission(request);
 //     //     return ResponseEntity.ok(admission);
 //     // }
@@ -48,21 +43,16 @@ import lombok.RequiredArgsConstructor;
 // public ResponseEntity<Admission> createAdmission(
 //         @RequestBody AdmissionRequest request,
 //         Principal principal) {
-
 //     if (principal == null) {
 //         throw new RuntimeException("User not authenticated");
 //     }
-
 //     String email = principal.getName(); // ✅ logged-in user email
 //     return ResponseEntity.ok(admissionService.createAdmission(request, email));
 // }
-
-
 //     @GetMapping
 //     public ResponseEntity<?> getAllAdmissions() {
 //         return ResponseEntity.ok("API Ready");
 //     }
-
 //     // @GetMapping("/applied")
 //     // public ResponseEntity<List<Admission>> getAppliedStudents() {
 //     //     return ResponseEntity.ok(admissionService.getAllAdmissions());
@@ -72,48 +62,38 @@ import lombok.RequiredArgsConstructor;
 //     public List<Admission> getAdmissionsBySchool(@RequestParam Long schoolId) {
 //         return admissionRepository.findBySchool_Id(schoolId);
 //     }
-
 //     // ✅ UPDATE
 //     @PutMapping("/{id}")
 //     public ResponseEntity<Admission> updateAdmission(
 //             @PathVariable Long id,
 //             @RequestBody Admission admission) {
-
 //         return ResponseEntity.ok(admissionService.updateAdmission(id, admission));
 //     }
-
 //     // ✅ DELETE
 //     @DeleteMapping("/{id}")
 //     public ResponseEntity<String> deleteAdmission(@PathVariable Long id) {
 //         admissionService.deleteAdmission(id);
 //         return ResponseEntity.ok("Admission deleted successfully");
 //     }
-
 //     @PutMapping("/{id}/status")
 // public ResponseEntity<?> updateStatus(
 //         @PathVariable Long id,
 //         @RequestParam String status,
 //         Authentication authentication) {
-
 //     admissionService.updateAdmissionStatus(
 //             id,
 //             status,
 //             authentication.getName()
 //     );
-
 //     return ResponseEntity.ok("Status updated");
 // }
 // @GetMapping("/{id}/status-history")
 // public List<AdmissionStatusHistory>
 // getStatusHistory(@PathVariable Long id) {
-
 //     return statusHistoryRepository
 //             .findByAdmission_IdOrderByChangedAtDesc(id);
 // }
-
-
 // }
-
 @RestController
 @RequestMapping("/api/admissions")
 @RequiredArgsConstructor
@@ -162,13 +142,13 @@ public class AdmissionController {
         Admission updated = admissionService.updateAdmission(id, admission);
         return ResponseEntity.ok(updated);
     }
+
     @GetMapping("/{id}")
-public ResponseEntity<Admission> getAdmissionById(@PathVariable Long id) {
+    public ResponseEntity<Admission> getAdmissionById(@PathVariable Long id) {
 
-    Admission admission = admissionService.getAdmissionById(id);
-    return ResponseEntity.ok(admission);
-}
-
+        Admission admission = admissionService.getAdmissionById(id);
+        return ResponseEntity.ok(admission);
+    }
 
     // ---------------- DELETE ADMISSION ----------------
     // @DeleteMapping("/{id}")
@@ -176,14 +156,12 @@ public ResponseEntity<Admission> getAdmissionById(@PathVariable Long id) {
     //     admissionService.deleteAdmission(id);
     //     return ResponseEntity.ok("Admission deleted successfully");
     // }
-
     // ---------------- UPDATE STATUS ----------------
     // @PutMapping("/{id}/status")
     // public ResponseEntity<String> updateStatus(
     //         @PathVariable Long id,
     //         @RequestParam String status, // received as String
     //         Authentication authentication) {
-
     //     // Convert String to Enum safely
     //     AdmissionStatus admissionStatus;
     //     try {
@@ -191,27 +169,58 @@ public ResponseEntity<Admission> getAdmissionById(@PathVariable Long id) {
     //     } catch (IllegalArgumentException e) {
     //         throw new RuntimeException("Invalid status value. Allowed: APPLIED, APPROVED, REJECTED");
     //     }
-
     //     admissionService.updateAdmissionStatus(id, admissionStatus);
     //     return ResponseEntity.ok("Status updated successfully");
     // }
-
     @PutMapping("/{id}/status")
-public ResponseEntity<String> updateStatus(
-        @PathVariable Long id,
-        @RequestBody StatusUpdateRequest request, // receive enum directly
-        Authentication authentication) {
+    public ResponseEntity<String> updateStatus(
+            @PathVariable Long id,
+            @RequestBody StatusUpdateRequest request, // receive enum directly
+            Authentication authentication) {
 
-    admissionService.updateAdmissionStatus(id, request.status());
-    return ResponseEntity.ok("Status updated successfully");
-}
-
+        admissionService.updateAdmissionStatus(id, request.status());
+        return ResponseEntity.ok("Status updated successfully");
+    }
 
     // ---------------- GET STATUS HISTORY ----------------
     @GetMapping("/{id}/status-history")
     public ResponseEntity<List<AdmissionStatusHistory>> getStatusHistory(@PathVariable Long id) {
-        List<AdmissionStatusHistory> history =
-                statusHistoryRepository.findByAdmission_IdOrderByChangedAtDesc(id);
+        List<AdmissionStatusHistory> history
+                = statusHistoryRepository.findByAdmission_IdOrderByChangedAtDesc(id);
         return ResponseEntity.ok(history);
     }
+
+    // get confirm status 
+    @GetMapping("/search")
+    public ResponseEntity<List<Admission>> searchAdmissions(
+            @RequestParam Long schoolId,
+            @RequestParam(required = false) String academicYear,
+            @RequestParam(required = false) String admissionNumber,
+            @RequestParam(required = false) String studentClass
+           ) {
+
+        List<Admission> admissions = admissionService.searchAdmissions(
+                schoolId,
+                academicYear,
+                admissionNumber,
+                studentClass
+                
+        );
+
+        return ResponseEntity.ok(admissions);
+    }
+    
 }
+
+    
+            
+            
+            
+            
+                    
+                
+                
+                
+                
+                
+                    

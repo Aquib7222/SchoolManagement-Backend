@@ -5,8 +5,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.schoolmanagement.schoolmanagementwebsite.enums.AttendanceStatus;
 import com.schoolmanagement.schoolmanagementwebsite.enums.FeeBatch;
 import com.schoolmanagement.schoolmanagementwebsite.enums.FeeCategory;
+import com.schoolmanagement.schoolmanagementwebsite.enums.Month;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Standard;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Sessions;
@@ -56,6 +58,16 @@ public class MasterController {
     @GetMapping("/teacherCategory")
     public TeacherCategory[] getTeacherCategory(){
         return TeacherCategory.values();
+    }
+
+    @GetMapping("/attendanceStatus")
+    public AttendanceStatus[] getAttendanceStatus(){
+        return AttendanceStatus.values();
+    }
+
+    @GetMapping("/month")
+    public Month[] getMonth(){
+        return Month.values();
     }
 
 

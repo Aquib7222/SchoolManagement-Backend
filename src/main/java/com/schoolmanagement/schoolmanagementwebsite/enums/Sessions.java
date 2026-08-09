@@ -18,4 +18,6 @@ public enum Sessions {
     public String getValue() {
         return value;
     }
+
+    
 }

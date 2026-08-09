@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
+
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
@@ -67,19 +68,18 @@ AND (:section IS NULL OR :section='' OR
      s.section = :section)
 
 """)
-List<Student> searchStudentDetails(
-        @Param("schoolId") Long schoolId,
-        @Param("academicYear") String academicYear,
-        @Param("admissionNumber") String admissionNumber,
-        @Param("studentName") String studentName,
-        @Param("fatherName") String fatherName,
-        @Param("motherName") String motherName,
-        @Param("mobile") String mobile,
-        @Param("studentClass") String studentClass,
-        @Param("section") String section
-);
-    
-    
+    List<Student> searchStudentDetails(
+            @Param("schoolId") Long schoolId,
+            @Param("academicYear") String academicYear,
+            @Param("admissionNumber") String admissionNumber,
+            @Param("studentName") String studentName,
+            @Param("fatherName") String fatherName,
+            @Param("motherName") String motherName,
+            @Param("mobile") String mobile,
+            @Param("studentClass") String studentClass,
+            @Param("section") String section
+    );
+
     // ✅ Check if student already created for this admission
     boolean existsByAdmission(Admission admission);
 
@@ -91,20 +91,26 @@ List<Student> searchStudentDetails(
 
     List<Student> findBySchool_Id(Long schoolId);
 
+    Optional<Student> findBySchool_IdAndAdmissionNumber(Long schoolId, String admissionNumber);
+
+    Optional<Student> findBySchool_IdAndAcademicYearAndAdmissionNumber(
+            Long schoolId,
+            String academicYear,
+            String admissionNumber
+    );
+
+    List<Student> findBySchool_IdAndAcademicYearAndStudentClassAndSection(
+            Long schoolId,
+            String academicYear,
+            String studentClass,
+            Section section
+    );
+
+    List<Student> findBySchoolIdAndAdmissionNumberIn(
+        Long schoolId,
+        List<String> admissionNumbers
+);
     
 
-Optional<Student> findBySchool_IdAndAdmissionNumber(Long schoolId, String admissionNumber);
-
-Optional<Student> findBySchool_IdAndAcademicYearAndAdmissionNumber(
-        Long schoolId,
-        String academicYear,
-        String admissionNumber
-);
-
-List<Student> findBySchool_IdAndAcademicYearAndStudentClassAndSection(
-        Long schoolId,
-        String academicYear,
-        String studentClass,
-        Section section
-);
+      
 }

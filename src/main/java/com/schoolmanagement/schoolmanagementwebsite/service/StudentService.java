@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.schoolmanagement.schoolmanagementwebsite.dto.SectionShufflingDTO;
 import com.schoolmanagement.schoolmanagementwebsite.entity.Student;
 import com.schoolmanagement.schoolmanagementwebsite.entity.User;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
@@ -288,5 +289,25 @@ public class StudentService {
         System.out.println("Email : " + savedStudent.getEmail());
 
         return savedStudent;
+    }
+
+    public void sectionShuffling(SectionShufflingDTO request) {
+        List<Student> students = studentRepository.findBySchoolIdAndAdmissionNumberIn(request.getSchoolId(), request.getAdmissionNumber());
+
+        System.out.println("School Id : " + request.getSchoolId());
+        System.out.println("Admission Numbers : " + request.getAdmissionNumber());
+        System.out.println("Section : " + request.getSection());
+        if (students.isEmpty()) {
+            throw new RuntimeException("No Students Found");
+
+        }
+        if (students.size() != request.getAdmissionNumber().size()) {
+            throw new RuntimeException("Some admission numbers are invalid.");
+        }
+        for (Student student : students) {
+            student.setSection(request.getSection());
+
+        }
+        studentRepository.saveAll(students);
     }
 }

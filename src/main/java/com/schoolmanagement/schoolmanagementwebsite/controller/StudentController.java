@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -20,6 +22,7 @@ import com.schoolmanagement.schoolmanagementwebsite.entity.Student;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 import com.schoolmanagement.schoolmanagementwebsite.repository.StudentRepository;
 import com.schoolmanagement.schoolmanagementwebsite.service.StudentService;
+import com.schoolmanagement.schoolmanagementwebsite.dto.SectionShufflingDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -169,5 +172,13 @@ public class StudentController {
                 studentClass,
                 section
         );
+    }
+
+//     section shuffling 
+    @PatchMapping("section-shuffling")
+    public ResponseEntity<String> sectionShuffling(@RequestBody SectionShufflingDTO request){
+
+        studentService.sectionShuffling(request);
+        return ResponseEntity.ok("Students Section Updated Successfully");
     }
 }

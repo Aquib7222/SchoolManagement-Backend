@@ -21,22 +21,24 @@ public class SchoolMenuMapping {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name="school_module_mapping_id")
-    @JsonBackReference
-    private SchoolModuleMapping schoolModuleMapping;
+   @ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "school_module_mapping_id")
+@JsonBackReference
+private SchoolModuleMapping schoolModuleMapping;
 
     @ManyToOne
     @JoinColumn(name="menu_id")
     private Menu menu;
 
     @OneToMany(
-            mappedBy="schoolMenuMapping",
-            cascade=CascadeType.ALL,
-            orphanRemoval=true
-    )
-    @JsonManagedReference
-    private List<SchoolSubMenuMapping> subMenuMappings = new ArrayList<>();
+        mappedBy = "schoolMenuMapping",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+)
+@JsonManagedReference
+private List<SchoolSubMenuMapping> subMenuMappings =
+        new ArrayList<>();
 
     public SchoolMenuMapping() {
     }

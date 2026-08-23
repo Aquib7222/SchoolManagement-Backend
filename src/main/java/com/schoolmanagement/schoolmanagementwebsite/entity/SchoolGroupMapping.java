@@ -9,10 +9,10 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(
-    name = "school_group_mapping",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"school_id","user_group_id"})
-    }
+        name = "school_group_mapping",
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = {"school_id", "user_group_id"})
+        }
 )
 public class SchoolGroupMapping {
 
@@ -29,12 +29,16 @@ public class SchoolGroupMapping {
     private UserGroup userGroup;
 
     @OneToMany(
-            mappedBy = "schoolGroupMapping",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    @JsonManagedReference
-    private List<SchoolModuleMapping> moduleMappings = new ArrayList<>();
+        mappedBy = "schoolGroupMapping",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+)
+@JsonManagedReference
+private List<SchoolModuleMapping> moduleMappings =
+        new ArrayList<>();
+
+    
 
     public SchoolGroupMapping() {
     }
@@ -61,7 +65,8 @@ public class SchoolGroupMapping {
 
     public List<SchoolModuleMapping> getModuleMappings() {
         return moduleMappings;
-    }
+ 
+   }
 
     public void setModuleMappings(List<SchoolModuleMapping> moduleMappings) {
         this.moduleMappings = moduleMappings;

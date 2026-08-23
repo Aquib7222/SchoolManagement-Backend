@@ -2,6 +2,8 @@ package com.schoolmanagement.schoolmanagementwebsite.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.schoolmanagement.schoolmanagementwebsite.dto.SaveSchoolMappingRequest;
@@ -21,21 +23,42 @@ public class SchoolMappingController {
     }
 
     // ================= SAVE =================
-
-    @PostMapping("/save")
-    public String saveMapping(
+    // @PostMapping("/save")
+    // public String saveMapping(
+    //         @RequestBody SaveSchoolMappingRequest request) {
+    //     schoolMappingService.saveMapping(request);
+    //     return "School Mapping Saved Successfully";
+    // }
+@PostMapping("/save")
+public ResponseEntity<?> saveMapping(
             @RequestBody SaveSchoolMappingRequest request) {
 
-        schoolMappingService.saveMapping(request);
+        try {
 
-        return "School Mapping Saved Successfully";
+            System.out.println("===== SCHOOL MAPPING REQUEST =====");
+            System.out.println("School ID: " + request.getSchoolId());
+            System.out.println("User Group ID: " + request.getUserGroupId());
+            System.out.println("Module IDs: " + request.getModuleIds());
+            System.out.println("Menu IDs: " + request.getMenuIds());
+            System.out.println("Sub Menu IDs: " + request.getSubMenuIds());
+
+            schoolMappingService.saveMapping(request);
+
+            return ResponseEntity.ok("School Mapping Saved Successfully");
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
     }
 
     // ================= LOAD =================
-
     @GetMapping("/load")
     public SchoolMappingResponse loadMapping(
-
             @RequestParam Long schoolId,
             @RequestParam Long groupId) {
 
@@ -45,14 +68,13 @@ public class SchoolMappingController {
     }
 
     @GetMapping("/sidebar")
-public List<SidebarModuleResponse> getSidebar(
+    public List<SidebarModuleResponse> getSidebar(
+            @RequestParam Long schoolId,
+            @RequestParam Long groupId) {
 
-        @RequestParam Long schoolId,
-        @RequestParam Long groupId) {
-
-    return schoolMappingService.getSidebar(
-            schoolId,
-            groupId);
-}
+        return schoolMappingService.getSidebar(
+                schoolId,
+                groupId);
+    }
 
 }

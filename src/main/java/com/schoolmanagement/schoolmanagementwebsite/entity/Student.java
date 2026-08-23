@@ -91,6 +91,9 @@ private String photo;
      @Enumerated(EnumType.STRING)
     private Section section;   
 
+    @Column(name = "roll_number")
+private Integer rollNumber;
+
     
 
 }

@@ -7,9 +7,18 @@ public class UserDTO {
     private String email;
     private String role;
     private String phone;
+    public String getAdmissionNumber() {
+        return admissionNumber;
+    }
+
+    public void setAdmissionNumber(String admissionNumber) {
+        this.admissionNumber = admissionNumber;
+    }
+
     private String status;
     private Long schoolId;
     private SchoolDTO school;
+    private String admissionNumber;
 
     // getters & setters
 

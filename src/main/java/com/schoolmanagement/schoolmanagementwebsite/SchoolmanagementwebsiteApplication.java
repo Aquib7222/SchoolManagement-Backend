@@ -8,7 +8,7 @@ public class SchoolmanagementwebsiteApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SchoolmanagementwebsiteApplication.class, args);
-		System.out.println("SkoolMint System Run Successfully");
+		System.out.println("ZYNTaks Education System Run Successfully");
 	}
 
 }

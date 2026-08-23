@@ -5,13 +5,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.schoolmanagement.schoolmanagementwebsite.dto.SectionShufflingDTO;
+import com.schoolmanagement.schoolmanagementwebsite.dto.Student.RollNumberItemRequest;
+import com.schoolmanagement.schoolmanagementwebsite.dto.Student.RollNumberUpdateRequest;
 import com.schoolmanagement.schoolmanagementwebsite.entity.Student;
 import com.schoolmanagement.schoolmanagementwebsite.entity.User;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
@@ -98,7 +106,7 @@ public class StudentService {
         );
     }
 
-    // ✅ Total students in DB
+    // ? Total students in DB
     public long getTotalStudents() {
         return studentRepository.count();
     }
@@ -308,6 +316,182 @@ public class StudentService {
             student.setSection(request.getSection());
 
         }
+        studentRepository.saveAll(students);
+    }
+
+    @Transactional
+    public void updateRollNumbers(RollNumberUpdateRequest request) {
+
+        if (request.getSchoolId() == null) {
+            throw new RuntimeException("School ID is required");
+        }
+
+        if (request.getAcademicYear() == null
+                || request.getAcademicYear().trim().isEmpty()) {
+            throw new RuntimeException("Academic year is required");
+        }
+
+        if (request.getStudentClass() == null
+                || request.getStudentClass().trim().isEmpty()) {
+            throw new RuntimeException("Student class is required");
+        }
+
+        if (request.getSection() == null
+                || request.getSection().trim().isEmpty()) {
+            throw new RuntimeException("Section is required");
+        }
+
+        if (request.getStudents() == null
+                || request.getStudents().isEmpty()) {
+            throw new RuntimeException("No students provided");
+        }
+
+        // =====================================================
+        // SECTION ENUM CONVERSION
+        // =====================================================
+        Section section;
+
+        try {
+
+            section = Section.valueOf(
+                    request.getSection().trim().toUpperCase()
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            throw new RuntimeException(
+                    "Invalid section: " + request.getSection()
+            );
+        }
+
+        // =====================================================
+        // ADMISSION NUMBERS
+        // =====================================================
+        List<String> admissionNumbers
+                = request.getStudents()
+                        .stream()
+                        .map(RollNumberItemRequest::getAdmissionNumber)
+                        .filter(Objects::nonNull)
+                        .map(String::trim)
+                        .toList();
+
+        if (admissionNumbers.isEmpty()) {
+            throw new RuntimeException(
+                    "Admission numbers are required"
+            );
+        }
+
+        // =====================================================
+        // CHECK DUPLICATE ROLL NUMBERS
+        // =====================================================
+        List<Integer> rollNumbers
+                = request.getStudents()
+                        .stream()
+                        .map(RollNumberItemRequest::getRollNumber)
+                        .filter(Objects::nonNull)
+                        .toList();
+
+        Set<Integer> uniqueRollNumbers
+                = new HashSet<>(rollNumbers);
+
+        if (uniqueRollNumbers.size() != rollNumbers.size()) {
+
+            throw new RuntimeException(
+                    "Duplicate roll numbers are not allowed"
+            );
+        }
+
+        // =====================================================
+        // LOAD STUDENTS
+        // =====================================================
+        List<Student> students
+                = studentRepository
+                        .findBySchool_IdAndAcademicYearAndStudentClassAndSectionAndAdmissionNumberIn(
+                                request.getSchoolId(),
+                                request.getAcademicYear(),
+                                request.getStudentClass(),
+                                section,
+                                admissionNumbers
+                        );
+
+        if (students.isEmpty()) {
+
+            throw new RuntimeException(
+                    "No students found for selected class and section"
+            );
+        }
+
+        // =====================================================
+        // CHECK ALL STUDENTS FOUND
+        // =====================================================
+        if (students.size() != admissionNumbers.size()) {
+
+            Set<String> foundAdmissionNumbers
+                    = students.stream()
+                            .map(Student::getAdmissionNumber)
+                            .collect(Collectors.toSet());
+
+            List<String> missingStudents
+                    = admissionNumbers.stream()
+                            .filter(
+                                    admissionNumber
+                                    -> !foundAdmissionNumbers.contains(
+                                            admissionNumber
+                                    )
+                            )
+                            .toList();
+
+            throw new RuntimeException(
+                    "Some students were not found: "
+                    + missingStudents
+            );
+        }
+
+        // =====================================================
+        // CREATE ADMISSION NUMBER -> ROLL NUMBER MAP
+        // =====================================================
+        Map<String, Integer> rollNumberMap
+                = request.getStudents()
+                        .stream()
+                        .collect(
+                                Collectors.toMap(
+                                        item
+                                        -> item.getAdmissionNumber().trim(),
+                                        RollNumberItemRequest::getRollNumber
+                                )
+                        );
+
+        // =====================================================
+        // UPDATE
+        // =====================================================
+        for (Student student : students) {
+
+            Integer rollNumber
+                    = rollNumberMap.get(
+                            student.getAdmissionNumber()
+                    );
+
+            if (rollNumber == null) {
+
+                throw new RuntimeException(
+                        "Roll number missing for admission number: "
+                        + student.getAdmissionNumber()
+                );
+            }
+
+            if (rollNumber <= 0) {
+
+                throw new RuntimeException(
+                        "Roll number must be greater than 0"
+                );
+            }
+
+            student.setRollNumber(rollNumber);
+        }
+
+        // =====================================================
+        // SAVE
+        // =====================================================
         studentRepository.saveAll(students);
     }
 }

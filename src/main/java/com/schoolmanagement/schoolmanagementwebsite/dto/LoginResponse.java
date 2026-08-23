@@ -52,18 +52,22 @@
 
 
 
-
-
 package com.schoolmanagement.schoolmanagementwebsite.dto;
 
 public class LoginResponse {
 
     private String token;
     private UserDTO user;
+    private String admissionNumber;
 
-    public LoginResponse(String token, UserDTO user) {
+    public LoginResponse(
+            String token,
+            UserDTO user,
+            String admissionNumber
+    ) {
         this.token = token;
         this.user = user;
+        this.admissionNumber = admissionNumber;
     }
 
     public String getToken() {
@@ -73,5 +77,8 @@ public class LoginResponse {
     public UserDTO getUser() {
         return user;
     }
-}
 
+    public String getAdmissionNumber() {
+        return admissionNumber;
+    }
+}

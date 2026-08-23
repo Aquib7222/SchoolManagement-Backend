@@ -23,6 +23,7 @@ import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 import com.schoolmanagement.schoolmanagementwebsite.repository.StudentRepository;
 import com.schoolmanagement.schoolmanagementwebsite.service.StudentService;
 import com.schoolmanagement.schoolmanagementwebsite.dto.SectionShufflingDTO;
+import com.schoolmanagement.schoolmanagementwebsite.dto.Student.RollNumberUpdateRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -181,4 +182,34 @@ public class StudentController {
         studentService.sectionShuffling(request);
         return ResponseEntity.ok("Students Section Updated Successfully");
     }
+
+    @PutMapping("/roll-numbers")
+public ResponseEntity<?> updateRollNumbers(
+        @RequestBody RollNumberUpdateRequest request) {
+
+    try {
+
+        studentService.updateRollNumbers(request);
+
+        return ResponseEntity.ok(
+                "Roll numbers saved successfully"
+        );
+
+    } catch (RuntimeException e) {
+
+        e.printStackTrace();
+
+        return ResponseEntity
+                .badRequest()
+                .body(e.getMessage());
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+
+        return ResponseEntity
+                .internalServerError()
+                .body("Failed to save roll numbers");
+    }
+}
 }

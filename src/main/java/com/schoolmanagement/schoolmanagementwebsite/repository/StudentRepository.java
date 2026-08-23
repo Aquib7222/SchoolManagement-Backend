@@ -105,10 +105,27 @@ AND (:section IS NULL OR :section='' OR
             String studentClass,
             Section section
     );
+    List<Student> findBySchool_IdAndAcademicYearAndStudentClassAndSectionAndAdmissionNumberIn(
+        Long schoolId,
+        String academicYear,
+        String studentClass,
+        Section section,
+        List<String> admissionNumbers
+);
 
     List<Student> findBySchoolIdAndAdmissionNumberIn(
         Long schoolId,
         List<String> admissionNumbers
+);
+
+Optional<Student> findBySchool_IdAndMobile(
+        Long schoolId,
+        String mobile
+);
+
+Optional<Student> findBySchool_IdAndEmail(
+        Long schoolId,
+        String email
 );
     
 

@@ -26,17 +26,19 @@ public class SchoolModuleMapping {
     @JsonBackReference
     private SchoolGroupMapping schoolGroupMapping;
 
-    @ManyToOne
-    @JoinColumn(name="module_id")
-    private Module module;
+    @ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "module_id")
+private Module module;
 
-    @OneToMany(
-            mappedBy="schoolModuleMapping",
-            cascade=CascadeType.ALL,
-            orphanRemoval=true
-    )
-    @JsonManagedReference
-    private List<SchoolMenuMapping> menuMappings = new ArrayList<>();
+   @OneToMany(
+        mappedBy = "schoolModuleMapping",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+)
+@JsonManagedReference
+private List<SchoolMenuMapping> menuMappings =
+        new ArrayList<>();
 
     public SchoolModuleMapping() {
     }

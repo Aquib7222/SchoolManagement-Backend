@@ -1184,9 +1184,7 @@ public class SchoolMappingService {
                     module.getModuleName()
             );
 
-            moduleDto.setIcon(
-                    module.getIcon()
-            );
+           
 
             moduleDto.setPath(
                     module.getPath()

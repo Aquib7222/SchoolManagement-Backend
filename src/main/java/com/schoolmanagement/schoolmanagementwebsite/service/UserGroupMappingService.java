@@ -9,6 +9,11 @@ public interface UserGroupMappingService {
 
     String saveMapping(UserGroupMappingDto dto);
 
+    String updateMapping(
+            Long id,
+            UserGroupMappingDto dto
+    );
+
     List<UserGroupMapping> getAllMappings();
 
     UserGroupMapping getMappingById(Long id);

@@ -23,6 +23,16 @@ public class UserGroupMappingController {
         return ResponseEntity.ok(service.saveMapping(dto));
     }
 
+    @PutMapping("/update/{id}")
+public ResponseEntity<String> updateMapping(
+        @PathVariable Long id,
+        @RequestBody UserGroupMappingDto dto) {
+
+    return ResponseEntity.ok(
+            service.updateMapping(id, dto)
+    );
+}
+
     // Get All Mappings
     @GetMapping("/all")
     public ResponseEntity<?> getAllMappings() {

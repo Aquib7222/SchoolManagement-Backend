@@ -115,6 +115,117 @@ public class UserGroupMappingServiceImpl implements UserGroupMappingService {
 
         return "User Group Mapping Saved Successfully";
     }
+    @Override
+@Transactional
+public String updateMapping(
+        Long id,
+        UserGroupMappingDto dto) {
+
+    UserGroupMapping mapping =
+            mappingRepository.findById(id)
+                    .orElseThrow(() ->
+                            new RuntimeException(
+                                    "Mapping Not Found"
+                            )
+                    );
+
+    UserGroup userGroup =
+            userGroupRepository
+                    .findById(dto.getUserGroupId())
+                    .orElseThrow(() ->
+                            new RuntimeException(
+                                    "User Group Not Found"
+                            )
+                    );
+
+    Module module =
+            moduleRepository
+                    .findById(dto.getModuleId())
+                    .orElseThrow(() ->
+                            new RuntimeException(
+                                    "Module Not Found"
+                            )
+                    );
+
+    // =========================
+    // Update Main Mapping
+    // =========================
+
+    mapping.setUserGroup(userGroup);
+    mapping.setModule(module);
+
+    mappingRepository.save(mapping);
+
+    // =========================
+    // DELETE OLD MENU MAPPING
+    // =========================
+
+    menuMappingRepository.deleteByMapping(mapping);
+
+    // =========================
+    // DELETE OLD SUBMENU MAPPING
+    // =========================
+
+    subMenuMappingRepository.deleteByMapping(mapping);
+
+    // =========================
+    // SAVE NEW MENUS
+    // =========================
+
+    if (dto.getMenuIds() != null) {
+
+        for (Long menuId : dto.getMenuIds()) {
+
+            Menu menu =
+                    menuRepository
+                            .findById(menuId)
+                            .orElseThrow(() ->
+                                    new RuntimeException(
+                                            "Menu Not Found"
+                                    )
+                            );
+
+            UserGroupMenuMapping menuMapping =
+                    new UserGroupMenuMapping();
+
+            menuMapping.setMapping(mapping);
+            menuMapping.setMenu(menu);
+
+            menuMappingRepository.save(menuMapping);
+        }
+    }
+
+    // =========================
+    // SAVE NEW SUBMENUS
+    // =========================
+
+    if (dto.getSubMenuIds() != null) {
+
+        for (Long subMenuId : dto.getSubMenuIds()) {
+
+            SubMenu subMenu =
+                    subMenuRepository
+                            .findById(subMenuId)
+                            .orElseThrow(() ->
+                                    new RuntimeException(
+                                            "Sub Menu Not Found"
+                                    )
+                            );
+
+            UserGroupSubMenuMapping subMenuMapping =
+                    new UserGroupSubMenuMapping();
+
+            subMenuMapping.setMapping(mapping);
+            subMenuMapping.setSubMenu(subMenu);
+
+            subMenuMappingRepository.save(
+                    subMenuMapping
+            );
+        }
+    }
+
+    return "User Group Mapping Updated Successfully";
+}
 
     @Override
     public List<UserGroupMapping> getAllMappings() {

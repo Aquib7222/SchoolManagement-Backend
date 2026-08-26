@@ -1,14 +1,22 @@
 package com.schoolmanagement.schoolmanagementwebsite.entity;
 
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Setter;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "modules")
+@Getter 
+@Setter
+@NoArgsConstructor
 public class Module {
 
     @Id
@@ -17,7 +25,7 @@ public class Module {
 
     private String moduleName;
 
-    private String icon;
+    private String description;
 
     private String path;
 
@@ -27,73 +35,13 @@ public class Module {
 
     private String image;
 
+    private String moduleCode;
+
     private String sequenceNumber;
 
-    public Module() {
-    }
+    private LocalDate createdOn;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getModuleName() {
-        return moduleName;
-    }
-
-    public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public Boolean getHasMenu() {
-        return hasMenu;
-    }
-
-    public void setHasMenu(Boolean hasMenu) {
-        this.hasMenu = hasMenu;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-    public String getSequenceNumber() {
-        return sequenceNumber;
-    }
-
-    public void setSequenceNumber(String sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
-    }
 }
     
 

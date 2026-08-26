@@ -13,4 +13,13 @@ public interface ModuleService {
 
      List<Module> getAllModules();
 
+     Module getModuleById(Long id);
+
+    String updateModule(
+            Long id,
+            ModuleDto dto,
+            MultipartFile image
+    ) throws Exception;
+
+    String deleteModule(Long id) throws Exception;
 }

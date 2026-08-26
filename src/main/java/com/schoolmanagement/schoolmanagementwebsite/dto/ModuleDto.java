@@ -3,11 +3,20 @@ package com.schoolmanagement.schoolmanagementwebsite.dto;
 public class ModuleDto {
 
     private String moduleName;
-    private String icon;
+    private String description;
     private String path;
     private Boolean hasMenu;
     private String status;
+    private String moduleCode;
     private String image;
+    public String getModuleCode() {
+        return moduleCode;
+    }
+
+    public void setModuleCode(String moduleCode) {
+        this.moduleCode = moduleCode;
+    }
+
     private String sequenceNumber;
 
     public ModuleDto() {
@@ -21,12 +30,12 @@ public class ModuleDto {
         this.moduleName = moduleName;
     }
 
-    public String getIcon() {
-        return icon;
+    public String getDescription() {
+        return description;
     }
 
-    public void setIcon(String icon) {
-        this.icon = icon;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getPath() {

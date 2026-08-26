@@ -1,5 +1,6 @@
 package com.schoolmanagement.schoolmanagementwebsite.repository;
 
+import java.util.Optional;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,12 @@ public interface UserRepository extends JpaRepository<User, Long>{
 
      // ✅ Prevent duplicate login accounts
      boolean existsByEmailAndRole(String email, String role);
+
+     Optional<User> findByUsername(String username);
+
+boolean existsByUsername(String username);
+
+boolean existsByEmail(String email);
+
+boolean existsByPhone(String phone);
 }

@@ -11,6 +11,30 @@ public class UserDTO {
         return admissionNumber;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public boolean isPhoneVerified() {
+        return phoneVerified;
+    }
+
+    public void setPhoneVerified(boolean phoneVerified) {
+        this.phoneVerified = phoneVerified;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
     public void setAdmissionNumber(String admissionNumber) {
         this.admissionNumber = admissionNumber;
     }
@@ -19,6 +43,9 @@ public class UserDTO {
     private Long schoolId;
     private SchoolDTO school;
     private String admissionNumber;
+    private String username;
+private boolean phoneVerified;
+private boolean emailVerified;
 
     // getters & setters
 

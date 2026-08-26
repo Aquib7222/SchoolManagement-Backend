@@ -38,6 +38,37 @@ private UserGroup userGroup;
 @JoinColumn(name = "school_id", nullable = false)
 private School school;
 
+public String getUsername() {
+    return username;
+}
+
+   public void setUsername(String username) {
+    this.username = username;
+   }
+
+   public boolean isPhoneVerified() {
+    return phoneVerified;
+   }
+
+   public void setPhoneVerified(boolean phoneVerified) {
+    this.phoneVerified = phoneVerified;
+   }
+
+   public boolean isEmailVerified() {
+    return emailVerified;
+   }
+
+   public void setEmailVerified(boolean emailVerified) {
+    this.emailVerified = emailVerified;
+   }
+
+@Column(unique = true, nullable = false)
+private String username;
+
+private boolean phoneVerified = false;
+
+private boolean emailVerified = false;
+
 
     public Long getId() {
         return id;

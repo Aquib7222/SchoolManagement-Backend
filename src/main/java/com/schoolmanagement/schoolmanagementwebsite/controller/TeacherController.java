@@ -44,14 +44,20 @@ public class TeacherController {
         );
     }
 
-    // 📄 LIST
-    // @GetMapping
-    // public ResponseEntity<List<Teacher>> listTeachers(
-    //         @RequestParam Long schoolId) {
-    //     return ResponseEntity.ok(
-    //             teacherService.getAllTeachers(schoolId)
-    //     );
-    // }
+    @GetMapping("/all")
+    public ResponseEntity<List<Teacher>> getAllTeachersList() {
+
+        List<Teacher> teachers = teacherService.getAllTeachersList();
+
+        return ResponseEntity.ok(teachers);
+    }
+     @GetMapping("/count")
+    public ResponseEntity<Long> getTeacherCount() {
+
+        return ResponseEntity.ok(
+            teacherService.getTeacherCount()
+        );
+    }
     @GetMapping
     public ResponseEntity<List<Teacher>> listTeachers(
             @RequestParam Long schoolId,

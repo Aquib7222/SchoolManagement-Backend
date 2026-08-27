@@ -145,5 +145,11 @@ public class TeacherService {
     return teacherRepo.save(teacher);
 }
 
+public List<Teacher> getAllTeachersList() {
+        return teacherRepo.findAll();
+    }
 
+    public long getTeacherCount() {
+        return teacherRepo.count();
+    }
 }

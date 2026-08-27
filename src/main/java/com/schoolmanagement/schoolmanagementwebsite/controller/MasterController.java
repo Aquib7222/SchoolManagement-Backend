@@ -8,10 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.schoolmanagement.schoolmanagementwebsite.dto.Assessment.AssessmentNatureResponse;
+import com.schoolmanagement.schoolmanagementwebsite.enums.AffiliationBoard;
 import com.schoolmanagement.schoolmanagementwebsite.enums.AttendanceStatus;
 import com.schoolmanagement.schoolmanagementwebsite.enums.FeeBatch;
 import com.schoolmanagement.schoolmanagementwebsite.enums.FeeCategory;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Month;
+import com.schoolmanagement.schoolmanagementwebsite.enums.SchoolCategory;
+import com.schoolmanagement.schoolmanagementwebsite.enums.SchoolType;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Standard;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Sessions;
@@ -103,5 +106,20 @@ public class MasterController {
     public SubjectCategory[] getSubjectCategory(){
         return SubjectCategory.values();
     }
+
+    @GetMapping("/school-type")
+public SchoolType[] getSchoolType() {
+    return SchoolType.values();
+}
+
+@GetMapping("/school-category")
+public SchoolCategory[] getSchoolCategory() {
+    return SchoolCategory.values();
+}
+
+@GetMapping("/affiliation-board")
+public AffiliationBoard[] getAffiliationBoard() {
+    return AffiliationBoard.values();
+}
 
 }

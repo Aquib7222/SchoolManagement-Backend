@@ -175,7 +175,21 @@ public class StudentController {
         );
     }
 
-//     section shuffling 
+   @GetMapping("/school")
+public ResponseEntity<List<Student>> getStudentsBySchool(
+        @RequestParam Long schoolId
+) {
+
+    System.out.println("School ID received: " + schoolId);
+
+    List<Student> students = studentRepo.findBySchool_Id(schoolId);
+
+    System.out.println("Students found: " + students.size());
+
+    return ResponseEntity.ok(students);
+}
+
+
     @PatchMapping("section-shuffling")
     public ResponseEntity<String> sectionShuffling(@RequestBody SectionShufflingDTO request){
 

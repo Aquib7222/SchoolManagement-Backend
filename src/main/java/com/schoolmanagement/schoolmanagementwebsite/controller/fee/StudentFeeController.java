@@ -4,14 +4,19 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.schoolmanagement.schoolmanagementwebsite.dto.fee.AssignFeeRequest;
 import com.schoolmanagement.schoolmanagementwebsite.entity.fee.StudentFee;
+import com.schoolmanagement.schoolmanagementwebsite.service.fee.StudentFeeService;
 
 import lombok.RequiredArgsConstructor;
-
-import com.schoolmanagement.schoolmanagementwebsite.service.fee.StudentFeeService;
 
 @RestController
 @RequestMapping("/api/student-fee")
@@ -21,9 +26,7 @@ public class StudentFeeController {
 
     private final StudentFeeService studentFeeService;
 
-    // ===============================
-    // Assign Fee To Students
-    // ===============================
+    
     @PostMapping("/assign")
     public ResponseEntity<String> assignFee(
             @RequestBody AssignFeeRequest request) {
@@ -56,6 +59,23 @@ public class StudentFeeController {
                 studentFeeService.getAllStudentFees(
                         authentication.getName()
                 )
+        );
+    }
+
+     @GetMapping("/school/{schoolId}")
+    public ResponseEntity<List<StudentFee>> getFeesBySchool(
+            @PathVariable Long schoolId) {
+
+        return ResponseEntity.ok(
+                studentFeeService.getFeesBySchoolId(schoolId)
+        );
+    }
+
+    @GetMapping("/all-Fee")
+    public ResponseEntity<List<StudentFee>> getAllFees() {
+
+        return ResponseEntity.ok(
+                studentFeeService.getAllFees()
         );
     }
 

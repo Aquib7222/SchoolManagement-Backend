@@ -25,75 +25,7 @@ import com.schoolmanagement.schoolmanagementwebsite.service.AdmissionService;
 
 import lombok.RequiredArgsConstructor;
 
-// @RestController
-// @RequestMapping("/api/admissions")
-// @RequiredArgsConstructor
-// @CrossOrigin(origins = "http://localhost:5173")
-// public class AdmissionController {
-//     private final AdmissionService admissionService;
-//     private final AdmissionStatusHistoryRepository statusHistoryRepository;
-//     private final AdmissionRepository admissionRepository;
-//     // @PostMapping
-//     // public ResponseEntity<Admission> createAdmission(
-//     //         @RequestBody AdmissionRequest request) {
-//     //     Admission admission = admissionService.createAdmission(request);
-//     //     return ResponseEntity.ok(admission);
-//     // }
-//    @PostMapping
-// public ResponseEntity<Admission> createAdmission(
-//         @RequestBody AdmissionRequest request,
-//         Principal principal) {
-//     if (principal == null) {
-//         throw new RuntimeException("User not authenticated");
-//     }
-//     String email = principal.getName(); // ✅ logged-in user email
-//     return ResponseEntity.ok(admissionService.createAdmission(request, email));
-// }
-//     @GetMapping
-//     public ResponseEntity<?> getAllAdmissions() {
-//         return ResponseEntity.ok("API Ready");
-//     }
-//     // @GetMapping("/applied")
-//     // public ResponseEntity<List<Admission>> getAppliedStudents() {
-//     //     return ResponseEntity.ok(admissionService.getAllAdmissions());
-//     // }
-//    // Get admissions for a specific school
-//     @GetMapping("/school")
-//     public List<Admission> getAdmissionsBySchool(@RequestParam Long schoolId) {
-//         return admissionRepository.findBySchool_Id(schoolId);
-//     }
-//     // ✅ UPDATE
-//     @PutMapping("/{id}")
-//     public ResponseEntity<Admission> updateAdmission(
-//             @PathVariable Long id,
-//             @RequestBody Admission admission) {
-//         return ResponseEntity.ok(admissionService.updateAdmission(id, admission));
-//     }
-//     // ✅ DELETE
-//     @DeleteMapping("/{id}")
-//     public ResponseEntity<String> deleteAdmission(@PathVariable Long id) {
-//         admissionService.deleteAdmission(id);
-//         return ResponseEntity.ok("Admission deleted successfully");
-//     }
-//     @PutMapping("/{id}/status")
-// public ResponseEntity<?> updateStatus(
-//         @PathVariable Long id,
-//         @RequestParam String status,
-//         Authentication authentication) {
-//     admissionService.updateAdmissionStatus(
-//             id,
-//             status,
-//             authentication.getName()
-//     );
-//     return ResponseEntity.ok("Status updated");
-// }
-// @GetMapping("/{id}/status-history")
-// public List<AdmissionStatusHistory>
-// getStatusHistory(@PathVariable Long id) {
-//     return statusHistoryRepository
-//             .findByAdmission_IdOrderByChangedAtDesc(id);
-// }
-// }
+
 @RestController
 @RequestMapping("/api/admissions")
 @RequiredArgsConstructor

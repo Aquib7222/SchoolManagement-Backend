@@ -32,4 +32,14 @@ public class AuditLogController {
                 )
         );
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AuditLogResponse> getAuditById(
+            @PathVariable Long id) {
+
+        AuditLogResponse response =
+                auditLogService.getAuditById(id);
+
+        return ResponseEntity.ok(response);
+    }
 }

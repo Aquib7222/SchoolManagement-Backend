@@ -15,12 +15,16 @@ public class AttendanceReportDTO {
 
     private String studentName;
 
+    private String month;
+
     // Day -> Attendance Status
     // Example:
     // 1 -> PRESENT
     // 2 -> ABSENT
     // 3 -> LEAVE
     private Map<Integer, AttendanceStatus> attendance = new HashMap<>();
+
+    private int totalDays;
 
     private int present;
 
@@ -29,4 +33,6 @@ public class AttendanceReportDTO {
     private int leave;
 
     private int halfDay;
+
+    private double attendancePercentage;
 }

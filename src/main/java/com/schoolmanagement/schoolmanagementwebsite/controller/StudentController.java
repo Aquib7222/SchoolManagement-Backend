@@ -8,9 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.schoolmanagement.schoolmanagementwebsite.dto.SectionShufflingDTO;
+import com.schoolmanagement.schoolmanagementwebsite.dto.Student.RollNumberUpdateRequest;
 import com.schoolmanagement.schoolmanagementwebsite.entity.Student;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 import com.schoolmanagement.schoolmanagementwebsite.repository.StudentRepository;
 import com.schoolmanagement.schoolmanagementwebsite.service.StudentService;
-import com.schoolmanagement.schoolmanagementwebsite.dto.SectionShufflingDTO;
-import com.schoolmanagement.schoolmanagementwebsite.dto.Student.RollNumberUpdateRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -77,7 +77,6 @@ public class StudentController {
             @RequestPart(value = "photo", required = false) MultipartFile photo,
             Authentication authentication
     ) {
-        
 
         String email = authentication.getName();
 
@@ -89,7 +88,7 @@ public class StudentController {
                     request,
                     photo
             );
-            
+
         } catch (IOException ex) {
             System.getLogger(StudentController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
@@ -175,55 +174,74 @@ public class StudentController {
         );
     }
 
-   @GetMapping("/school")
-public ResponseEntity<List<Student>> getStudentsBySchool(
-        @RequestParam Long schoolId
-) {
+    @GetMapping("/school")
+    public ResponseEntity<List<Student>> getStudentsBySchool(
+            @RequestParam Long schoolId
+    ) {
 
-    System.out.println("School ID received: " + schoolId);
+        System.out.println("School ID received: " + schoolId);
 
-    List<Student> students = studentRepo.findBySchool_Id(schoolId);
+        List<Student> students = studentRepo.findBySchool_Id(schoolId);
 
-    System.out.println("Students found: " + students.size());
+        System.out.println("Students found: " + students.size());
 
-    return ResponseEntity.ok(students);
-}
-
+        return ResponseEntity.ok(students);
+    }
 
     @PatchMapping("section-shuffling")
-    public ResponseEntity<String> sectionShuffling(@RequestBody SectionShufflingDTO request){
+    public ResponseEntity<String> sectionShuffling(@RequestBody SectionShufflingDTO request) {
 
         studentService.sectionShuffling(request);
         return ResponseEntity.ok("Students Section Updated Successfully");
     }
 
     @PutMapping("/roll-numbers")
-public ResponseEntity<?> updateRollNumbers(
-        @RequestBody RollNumberUpdateRequest request) {
+    public ResponseEntity<?> updateRollNumbers(
+            @RequestBody RollNumberUpdateRequest request) {
 
-    try {
+        try {
 
-        studentService.updateRollNumbers(request);
+            studentService.updateRollNumbers(request);
 
-        return ResponseEntity.ok(
-                "Roll numbers saved successfully"
+            return ResponseEntity.ok(
+                    "Roll numbers saved successfully"
+            );
+
+        } catch (RuntimeException e) {
+
+            e.printStackTrace();
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body("Failed to save roll numbers");
+        }
+    }
+
+    @PutMapping("/discontinue")
+    public ResponseEntity<String> discontinueStudent(
+            @RequestParam Long schoolId,
+            @RequestParam String admissionNumber) {
+
+        String response = studentService.discontinueStudent(
+                schoolId,
+                admissionNumber
         );
 
-    } catch (RuntimeException e) {
-
-        e.printStackTrace();
-
-        return ResponseEntity
-                .badRequest()
-                .body(e.getMessage());
-
-    } catch (Exception e) {
-
-        e.printStackTrace();
-
-        return ResponseEntity
-                .internalServerError()
-                .body("Failed to save roll numbers");
+        return ResponseEntity.ok(response);
     }
-}
-}
+
+    
+    }
+            
+                    
+                
+           
+                    

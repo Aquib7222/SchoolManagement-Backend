@@ -212,15 +212,34 @@ public class AuthController {
 
             School school = dbUser.getSchool();
 
-            SchoolDTO schoolDTO = new SchoolDTO();
+           SchoolDTO schoolDTO = new SchoolDTO();
 
-            schoolDTO.setId(school.getId());
-            schoolDTO.setSchoolName(school.getSchoolName());
-            schoolDTO.setSchoolCode(school.getSchoolCode());
-            schoolDTO.setEmail(school.getEmail());
-            schoolDTO.setMobileNo(school.getMobileNo());
-            schoolDTO.setAddress(school.getAddress());
-            schoolDTO.setStatus(school.getStatus());
+schoolDTO.setId(school.getId());
+schoolDTO.setSchoolName(school.getSchoolName());
+schoolDTO.setSchoolCode(school.getSchoolCode());
+schoolDTO.setEmail(school.getEmail());
+
+schoolDTO.setMobileNo(
+    school.getPhoneNumber()
+);
+
+String fullAddress =
+        school.getAddressLine1();
+
+if (school.getAddressLine2() != null
+        && !school.getAddressLine2().isBlank()) {
+
+    fullAddress +=
+            ", " + school.getAddressLine2();
+}
+
+schoolDTO.setAddress(fullAddress);
+
+schoolDTO.setStatus(
+    Boolean.TRUE.equals(school.getActive())
+        ? "ACTIVE"
+        : "INACTIVE"
+);
 
 
             // =====================================================

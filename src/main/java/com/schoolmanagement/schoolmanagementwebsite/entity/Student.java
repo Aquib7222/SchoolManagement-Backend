@@ -1,5 +1,8 @@
 package com.schoolmanagement.schoolmanagementwebsite.entity;
 
+import java.time.LocalDate;
+import java.util.*;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 import com.schoolmanagement.schoolmanagementwebsite.enums.StudentStatus;
@@ -71,6 +74,8 @@ public class Student {
 
     private String academicYear;
 
+    private LocalDate discontinueDate;
+
     @Column(name = "photo")
 private String photo;
 
@@ -93,6 +98,13 @@ private String photo;
 
     @Column(name = "roll_number")
 private Integer rollNumber;
+
+// @OneToMany(
+//     mappedBy = "student",
+//     cascade = CascadeType.ALL,
+//     orphanRemoval = false
+// )
+// private List<StudentEnrollment> enrollments = new ArrayList<>();
 
     
 

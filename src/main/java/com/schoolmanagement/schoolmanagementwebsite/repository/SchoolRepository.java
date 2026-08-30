@@ -8,5 +8,12 @@ import com.schoolmanagement.schoolmanagementwebsite.entity.School;
 public interface SchoolRepository extends JpaRepository<School, Long> {
 
      Optional<School> findByEmail(String email);
+
+     boolean existsBySchoolCode(String schoolCode);
+
+    Optional<School> findBySchoolCode(String schoolCode);
 }
+
+
+
 

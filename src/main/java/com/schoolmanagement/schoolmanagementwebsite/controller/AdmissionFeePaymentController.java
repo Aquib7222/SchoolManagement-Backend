@@ -48,5 +48,14 @@ public Map<String, Boolean> checkFeePaid(@RequestParam String admissionNumber,
     return Map.of("alreadyPaid", alreadyPaid);
 }
 
+@GetMapping("/school")
+public ResponseEntity<?> getAdmissionFeePaymentsBySchool(
+        @RequestParam Long schoolId
+) {
+
+    return ResponseEntity.ok(
+            admissionFeeRepo.findByAdmission_SchoolId(schoolId)
+    );
+}
 }
 

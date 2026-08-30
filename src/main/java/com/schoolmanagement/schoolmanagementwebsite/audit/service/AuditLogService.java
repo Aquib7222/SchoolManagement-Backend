@@ -13,4 +13,6 @@ public interface AuditLogService {
     Page<AuditLogResponse> getAllLogs(
             Pageable pageable
     );
+
+     AuditLogResponse getAuditById(Long auditId);
 }

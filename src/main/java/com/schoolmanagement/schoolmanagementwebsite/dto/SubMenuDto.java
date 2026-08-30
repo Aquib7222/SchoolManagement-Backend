@@ -2,6 +2,7 @@ package com.schoolmanagement.schoolmanagementwebsite.dto;
 
 public class SubMenuDto {
 
+    private Long id;
     private String subMenuName;
 
     private String subMenuUrl;
@@ -11,6 +12,13 @@ public class SubMenuDto {
     private Integer displayOrder;
 
     public SubMenuDto() {
+    }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getSubMenuName() {

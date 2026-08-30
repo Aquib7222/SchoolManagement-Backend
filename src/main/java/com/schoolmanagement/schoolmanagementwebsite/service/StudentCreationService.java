@@ -93,16 +93,47 @@ public class StudentCreationService {
                 = admission.getFirstName() + "@" + admission.getAdmissionNumber();
 
         // ================= CREATE USER LOGIN =================
-        User user = new User();
-        user.setName(admission.getFirstName() + " " + admission.getLastName());
-        user.setEmail(req.getUsername());
-        user.setPassword(passwordEncoder.encode(rawPassword)); // 🔐 BCrypt
-        user.setRole("STUDENT");
-        user.setPhone(admission.getPreferredNo());
-        user.setSchool(admission.getSchool());
-        user.setStatus("Active");
+User user = new User();
 
-        userRepo.save(user);
+String username = req.getUsername();
+
+if (username == null || username.trim().isEmpty()) {
+    throw new RuntimeException("Student username is required");
+}
+
+username = username.trim();
+
+// Check username specifically
+if (userRepo.existsByUsername(username)) {
+    throw new RuntimeException("Student username already exists");
+}
+
+user.setUsername(username);
+
+user.setName(
+    (admission.getFirstName() + " " +
+     (admission.getLastName() != null
+         ? admission.getLastName()
+         : ""))
+        .trim()
+);
+
+user.setEmail(
+    admission.getEmail() != null
+        ? admission.getEmail()
+        : username
+);
+
+user.setPassword(
+    passwordEncoder.encode(rawPassword)
+);
+
+user.setRole("STUDENT");
+user.setPhone(admission.getPreferredNo());
+user.setSchool(admission.getSchool());
+user.setStatus("Active");
+
+userRepo.save(user);
 
         // ================= UPDATE ADMISSION STATUS =================
         admission.setStatus(AdmissionStatus.ENROLLED);

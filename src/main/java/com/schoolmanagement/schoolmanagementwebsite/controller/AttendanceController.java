@@ -2,18 +2,23 @@ package com.schoolmanagement.schoolmanagementwebsite.controller;
 
 
 import java.util.List;
+
 import com.schoolmanagement.schoolmanagementwebsite.dto.AttendanceRequest;
 import com.schoolmanagement.schoolmanagementwebsite.dto.AttendanceReportDTO;
 import com.schoolmanagement.schoolmanagementwebsite.entity.Attendance;
 import com.schoolmanagement.schoolmanagementwebsite.service.AttendanceService;
+
 import java.time.Month;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import com.schoolmanagement.schoolmanagementwebsite.entity.User;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
+import com.schoolmanagement.schoolmanagementwebsite.repository.UserRepository;
 
 @RestController
 @RequestMapping("/api/student/attendance")
@@ -21,6 +26,10 @@ import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 public class AttendanceController {
 
     private final AttendanceService attendanceService;
+    
+    private final UserRepository userRepository;
+
+
 
     @PostMapping("/save")
     public ResponseEntity<String> saveAttendance(
@@ -68,4 +77,40 @@ public ResponseEntity<List<AttendanceReportDTO>> getMonthlyAttendance(
             )
     );
 }
+
+@GetMapping("/current")
+public ResponseEntity<AttendanceReportDTO> getCurrentMonthAttendance(
+        @RequestParam String admissionNumber,
+        Authentication authentication
+) {
+
+    String email = authentication.getName();
+
+    User user = userRepository.findByEmail(email);
+
+    if (user == null || user.getSchool() == null) {
+        throw new RuntimeException("User or School not found");
+    }
+
+    Long schoolId = user.getSchool().getId();
+
+    AttendanceReportDTO response =
+            attendanceService.getCurrentMonthAttendance(
+                    schoolId,
+                    admissionNumber
+            );
+
+    return ResponseEntity.ok(response);
+}
+
+@GetMapping("/school")
+public ResponseEntity<List<Attendance>> getAttendanceBySchool(
+        @RequestParam Long schoolId
+) {
+
+    return ResponseEntity.ok(
+            attendanceService.getAttendanceBySchoolId(schoolId)
+    );
+}
+
 }

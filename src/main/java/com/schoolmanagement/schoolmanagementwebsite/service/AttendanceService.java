@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.schoolmanagement.schoolmanagementwebsite.enums.AttendanceStatus;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 import java.time.Month;
 
@@ -99,61 +100,60 @@ public class AttendanceService {
 
     }
 
-   public List<DailyAttendanceReportDTO> getClassAttendance(
-        String academicYear,
-        String studentClass,
-        Section section,
-        String attendanceDate,
-        Authentication authentication) {
+    public List<DailyAttendanceReportDTO> getClassAttendance(
+            String academicYear,
+            String studentClass,
+            Section section,
+            String attendanceDate,
+            Authentication authentication) {
 
-    String email = authentication.getName();
+        String email = authentication.getName();
 
-    User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
 
-    if (user == null) {
-        throw new RuntimeException("User not found");
-    }
-
-    Long schoolId = user.getSchool().getId();
-
-    // Attendance List
-    List<Attendance> attendanceList =
-            attendanceRepository
-                    .findBySchoolIdAndAcademicYearAndStudentClassAndSectionAndAttendanceDate(
-                            schoolId,
-                            academicYear,
-                            studentClass,
-                            section,
-                            LocalDate.parse(attendanceDate)
-                    );
-
-    List<DailyAttendanceReportDTO> result = new ArrayList<>();
-
-    for (Attendance attendance : attendanceList) {
-
-        Student student = studentRepository
-                .findById(attendance.getStudentId())
-                .orElse(null);
-
-        if (student == null) {
-            continue;
+        if (user == null) {
+            throw new RuntimeException("User not found");
         }
 
-        DailyAttendanceReportDTO dto = new DailyAttendanceReportDTO();
+        Long schoolId = user.getSchool().getId();
 
-        dto.setStudentId(student.getId());
-        dto.setAdmissionNumber(student.getAdmissionNumber());
-        dto.setStudentName(student.getFirstName() + " " + student.getLastName());
-        dto.setStatus(attendance.getStatus());
+        // Attendance List
+        List<Attendance> attendanceList
+                = attendanceRepository
+                        .findBySchoolIdAndAcademicYearAndStudentClassAndSectionAndAttendanceDate(
+                                schoolId,
+                                academicYear,
+                                studentClass,
+                                section,
+                                LocalDate.parse(attendanceDate)
+                        );
 
-        result.add(dto);
+        List<DailyAttendanceReportDTO> result = new ArrayList<>();
+
+        for (Attendance attendance : attendanceList) {
+
+            Student student = studentRepository
+                    .findById(attendance.getStudentId())
+                    .orElse(null);
+
+            if (student == null) {
+                continue;
+            }
+
+            DailyAttendanceReportDTO dto = new DailyAttendanceReportDTO();
+
+            dto.setStudentId(student.getId());
+            dto.setAdmissionNumber(student.getAdmissionNumber());
+            dto.setStudentName(student.getFirstName() + " " + student.getLastName());
+            dto.setStatus(attendance.getStatus());
+
+            result.add(dto);
+        }
+
+        return result;
     }
 
-    return result;
-}
-
 //     monthly attendance 
-
     public List<AttendanceReportDTO> getMonthlyAttendance(
             String academicYear,
             String studentClass,
@@ -250,5 +250,179 @@ public class AttendanceService {
 
         return new ArrayList<>(report.values());
 
+    }
+
+    private String getCurrentAcademicYear(LocalDate date) {
+
+    int year = date.getYear();
+
+    if (date.getMonthValue() >= 4) {
+        return year + "-" + (year + 1);
+    }
+
+    return (year - 1) + "-" + year;
+}
+
+ public AttendanceReportDTO getCurrentMonthAttendance(
+        Long schoolId,
+        String admissionNumber
+) {
+
+    LocalDate today = LocalDate.now();
+
+    // Current month ka first day
+    LocalDate startDate = today.withDayOfMonth(1);
+
+    // Aaj tak
+    LocalDate endDate = today;
+
+    // Current academic year
+    String academicYear = getCurrentAcademicYear(today);
+
+    // Current month
+    String month = today.getMonth().name();
+
+    // ================= STUDENT =================
+
+    Student student = studentRepository
+            .findBySchool_IdAndAdmissionNumber(
+                    schoolId,
+                    admissionNumber
+            )
+            .orElseThrow(() ->
+                    new RuntimeException("Student not found")
+            );
+
+    // ================= ATTENDANCE =================
+
+    List<Attendance> attendanceList =
+            attendanceRepository
+                    .findBySchoolIdAndAdmissionNumberAndAcademicYearAndAttendanceDateBetween(
+                            schoolId,
+                            admissionNumber,
+                            academicYear,
+                            startDate,
+                            endDate
+                    );
+
+    AttendanceReportDTO report = new AttendanceReportDTO();
+
+    report.setStudentId(student.getId());
+    report.setAdmissionNumber(student.getAdmissionNumber());
+    report.setStudentName(student.getFirstName()+" "+student.getLastName());
+    report.setMonth(month);
+
+    int present = 0;
+    int absent = 0;
+    int leave = 0;
+    int halfDay = 0;
+
+    // ================= COUNT ATTENDANCE =================
+
+    for (Attendance attendance : attendanceList) {
+
+        if (attendance.getAttendanceDate() == null) {
+            continue;
+        }
+
+        int day =
+                attendance.getAttendanceDate()
+                        .getDayOfMonth();
+
+        AttendanceStatus status =
+                attendance.getStatus();
+
+        // Day wise attendance
+        report.getAttendance().put(day, status);
+
+        if (status == null) {
+            continue;
+        }
+
+        switch (status) {
+
+            case PRESENT:
+                present++;
+                break;
+
+            case ABSENT:
+                absent++;
+                break;
+
+            case LEAVE:
+                leave++;
+                break;
+
+            case HALF_DAY:
+                halfDay++;
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    // ================= WORKING DAYS =================
+
+    /*
+     * Attendance record sirf working day par create hota hai.
+     *
+     * Isliye totalDays = Present + Absent + Leave + HalfDay
+     *
+     * Sunday / holiday ka record nahi hoga,
+     * isliye denominator me nahi aayega.
+     */
+
+    int totalDays =
+            present
+            + absent
+            + leave
+            + halfDay;
+
+    // ================= PERCENTAGE =================
+
+    double attendancePercentage = 0.0;
+
+    if (totalDays > 0) {
+
+        // Half day ko 0.5 present maana
+        double effectivePresent =
+                present + (halfDay * 0.5);
+
+        attendancePercentage =
+                (effectivePresent / totalDays) * 100;
+
+        // 2 decimal places
+        attendancePercentage =
+                Math.round(attendancePercentage * 100.0)
+                        / 100.0;
+    }
+
+    // ================= SET RESPONSE =================
+
+    report.setTotalDays(totalDays);
+
+    report.setPresent(present);
+
+    report.setAbsent(absent);
+
+    report.setLeave(leave);
+
+    report.setHalfDay(halfDay);
+
+    report.setAttendancePercentage(
+            attendancePercentage
+    );
+
+    return report;
+}
+
+ public List<Attendance> getAttendanceBySchoolId(Long schoolId) {
+
+        if (schoolId == null) {
+            throw new RuntimeException("School ID is required");
+        }
+
+        return attendanceRepository.findBySchoolId(schoolId);
     }
 }

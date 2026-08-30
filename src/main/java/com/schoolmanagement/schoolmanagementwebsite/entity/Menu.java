@@ -32,12 +32,11 @@ public class Menu {
 
     private Boolean hasSubMenu;
 
-    @OneToMany(
+   @OneToMany(
     mappedBy = "menu",
     cascade = CascadeType.ALL,
     orphanRemoval = true
 )
-@JsonManagedReference
 private List<SubMenu> subMenus = new ArrayList<>();
 
     public Menu() {

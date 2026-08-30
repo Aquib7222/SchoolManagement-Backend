@@ -180,6 +180,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // <-- IMPORTANT
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/api/module/**").permitAll()
                 .requestMatchers("/api/master/**").permitAll()
@@ -200,6 +201,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/fee-structure/**").permitAll()
                 .requestMatchers("/api/student-fee/**").permitAll()
                 .requestMatchers("/api/student/attendance/**").permitAll()
+                .requestMatchers("/uploads/**").permitAll()
                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

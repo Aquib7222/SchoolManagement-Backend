@@ -1,7 +1,7 @@
 package com.schoolmanagement.schoolmanagementwebsite.dto;
 
 
-import lombok.Data;
+import lombok.*;
 
 // @Data
 // public class AdmissionRequest {
@@ -57,10 +57,13 @@ import lombok.Data;
 //     private String zip;
 // }
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AdmissionRequest {
 
-    // private String admissionNumber;
+    private String admissionNumber;
     private String academicYear;
     private String academicType;
     private String invoice;

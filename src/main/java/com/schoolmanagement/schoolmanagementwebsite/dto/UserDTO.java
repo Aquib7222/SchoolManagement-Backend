@@ -7,6 +7,10 @@ public class UserDTO {
     private String email;
     private String role;
     private String phone;
+    private String username;
+    private boolean phoneVerified;
+    private boolean emailVerified;
+
     public String getAdmissionNumber() {
         return admissionNumber;
     }
@@ -43,25 +47,22 @@ public class UserDTO {
     private Long schoolId;
     private SchoolDTO school;
     private String admissionNumber;
-    private String username;
-private boolean phoneVerified;
-private boolean emailVerified;
 
     // getters & setters
-
     public Long getId() {
         return id;
     }
 
     private Long userGroupId;
 
-public Long getUserGroupId() {
-    return userGroupId;
-}
+    public Long getUserGroupId() {
+        return userGroupId;
+    }
 
-public void setUserGroupId(Long userGroupId) {
-    this.userGroupId = userGroupId;
-}
+    public void setUserGroupId(Long userGroupId) {
+        this.userGroupId = userGroupId;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

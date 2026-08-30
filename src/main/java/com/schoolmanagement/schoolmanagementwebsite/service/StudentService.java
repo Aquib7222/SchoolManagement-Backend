@@ -5,13 +5,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,6 @@ import com.schoolmanagement.schoolmanagementwebsite.dto.Student.RollNumberItemRe
 import com.schoolmanagement.schoolmanagementwebsite.dto.Student.RollNumberUpdateRequest;
 import com.schoolmanagement.schoolmanagementwebsite.entity.Student;
 import com.schoolmanagement.schoolmanagementwebsite.entity.User;
-import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 import com.schoolmanagement.schoolmanagementwebsite.enums.StudentStatus;
 import com.schoolmanagement.schoolmanagementwebsite.repository.SchoolRepository;
@@ -172,13 +172,7 @@ public class StudentService {
             MultipartFile photo
     ) throws IOException {
 
-        System.out.println("========== UPDATE REQUEST ==========");
-        System.out.println("Request First Name : " + request.getFirstName());
-        System.out.println("Request Last Name  : " + request.getLastName());
-        System.out.println("Request Mobile     : " + request.getMobile());
-        System.out.println("Request Email      : " + request.getEmail());
-        System.out.println("Request Class      : " + request.getStudentClass());
-        System.out.println("====================================");
+       
 
         User user = userRepository.findByEmail(email);
         // System.out.println("Logged in email = " + email);
@@ -494,4 +488,32 @@ public class StudentService {
         // =====================================================
         studentRepository.saveAll(students);
     }
+
+    @Transactional
+    public String discontinueStudent(
+            Long schoolId,
+            String admissionNumber) {
+
+        Student student = studentRepository
+                .findBySchool_IdAndAdmissionNumber(
+                        schoolId,
+                        admissionNumber
+                )
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Student not found for this school"
+                        )
+                );
+
+        // Only status update
+        student.setStatus(StudentStatus.INACTIVE);
+
+        // Discontinue date
+        student.setDiscontinueDate(LocalDate.now());
+
+        studentRepository.save(student);
+
+        return "Student discontinued successfully";
+    }
+
 }

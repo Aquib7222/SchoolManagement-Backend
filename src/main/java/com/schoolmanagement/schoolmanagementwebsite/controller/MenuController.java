@@ -52,21 +52,24 @@ public class MenuController {
     }
 
     // Update Menu
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateMenu(
-            @PathVariable Long id,
-            @RequestBody MenuDto dto) {
+    @PutMapping("/{id}")
+public ResponseEntity<?> updateMenu(
+        @PathVariable Long id,
+        @RequestBody MenuDto dto) {
 
-        return ResponseEntity.ok(menuService.updateMenu(id, dto));
-
-    }
+    return ResponseEntity.ok(
+            menuService.updateMenu(id, dto)
+    );
+}
 
     // Delete Menu
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteMenu(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+public ResponseEntity<?> deleteMenu(
+        @PathVariable Long id) {
 
-        return ResponseEntity.ok(menuService.deleteMenu(id));
-
-    }
+    return ResponseEntity.ok(
+            menuService.deleteMenu(id)
+    );
+}
 
 }

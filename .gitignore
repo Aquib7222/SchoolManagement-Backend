@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+uploads/
+*.log
+hs_err_pid*.log

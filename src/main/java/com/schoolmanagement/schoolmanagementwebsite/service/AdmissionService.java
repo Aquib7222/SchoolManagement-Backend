@@ -414,6 +414,7 @@
 // }
 package com.schoolmanagement.schoolmanagementwebsite.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -475,6 +476,7 @@ import lombok.RequiredArgsConstructor;
 //         return admissionRepository.findAll();
 //     }
 // }
+
 @Service
 @RequiredArgsConstructor
 public class AdmissionService {
@@ -546,6 +548,7 @@ public class AdmissionService {
                 .state(request.getState())
                 .country(request.getCountry())
                 .zip(request.getZip())
+                .cancelDate(request.getCancelDate())
                 .school(school) // ✅ link School here
                 .status(AdmissionStatus.APPLIED) // ✅ ENUM
                 .build();
@@ -553,22 +556,7 @@ public class AdmissionService {
         return admissionRepository.save(admission);
     }
 
-    // =====================================================
-    // ✅ UPDATE ADMISSION
-    // =====================================================
-    // @Transactional
-    // public Admission updateAdmission(Long id, Admission updatedAdmission) {
-    //     Admission admission = admissionRepository.findById(id)
-    //             .orElseThrow(() -> new RuntimeException("Admission not found"));
-    //     // Update only allowed fields
-    //     admission.setFirstName(updatedAdmission.getFirstName());
-    //     admission.setLastName(updatedAdmission.getLastName());
-    //     admission.setStudentClass(updatedAdmission.getStudentClass());
-    //     admission.setAcademicYear(updatedAdmission.getAcademicYear());
-    //     admission.setAcademicType(updatedAdmission.getAcademicType());
-    //     admission.setEmail(updatedAdmission.getEmail());
-    //     return admissionRepository.save(admission);
-    // }
+ 
     public Admission updateAdmission(Long id, Admission request) {
 
         Admission existing = admissionRepository.findById(id)
@@ -642,6 +630,49 @@ public class AdmissionService {
         admissionRepository.save(admission);
     }
 
+@Transactional
+public void cancelAdmission(Long schoolId, String admissionNumber) {
+
+    Admission admission = admissionRepository
+            .findByAdmissionNumberAndSchoolId(admissionNumber,schoolId)
+            .orElseThrow(() -> new RuntimeException(
+                    "Admission not found for admission number: " + admissionNumber
+            ));
+
+    admission.setStatus(AdmissionStatus.CANCELLED);
+    admission.setCancelDate(LocalDate.now());
+
+    admissionRepository.save(admission);
+}
+    @Transactional
+public void reApproveAdmission(
+        Long schoolId,
+        String admissionNumber
+) {
+
+    Admission admission = admissionRepository
+            .findByAdmissionNumberAndSchoolId(
+ 
+                admissionNumber,
+                     schoolId
+            )
+            .orElseThrow(() ->
+                    new RuntimeException("Admission not found")
+            );
+
+    if (admission.getStatus() != AdmissionStatus.CANCELLED) {
+        throw new RuntimeException(
+                "Only cancelled admission can be re-approved"
+        );
+    }
+
+    admission.setStatus(AdmissionStatus.APPROVED);
+
+    // Cancel date clear kar do
+    admission.setCancelDate(null);
+
+    admissionRepository.save(admission);
+}
     public List<Admission> getAllAdmissions() {
         return admissionRepository.findAll();
     }
@@ -667,7 +698,22 @@ public class AdmissionService {
         );
     }
 
-    
+     public Admission getAdmissionBySchoolIdAndAdmissionNumber(
+            Long schoolId,
+            String admissionNumber) {
+
+        return admissionRepository
+                .findBySchoolIdAndAdmissionNumber(
+                        schoolId,
+                        admissionNumber
+                )
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Admission not found with admission number: "
+                                        + admissionNumber
+                        )
+                );
+    }
             
             
 }       

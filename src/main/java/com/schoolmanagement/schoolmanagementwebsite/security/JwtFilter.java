@@ -105,10 +105,17 @@ public class JwtFilter extends GenericFilter {
 
         String requestUri = req.getRequestURI();
 
-        if (requestUri.startsWith("/uploads/")) {
-            chain.doFilter(request, response);
-            return;
-        }
+System.out.println("JWT FILTER REQUEST = " + requestUri);
+
+if (requestUri.startsWith("/uploads/")) {
+
+    System.out.println(
+        "UPLOAD REQUEST BYPASSED JWT = " + requestUri
+    );
+
+    chain.doFilter(request, response);
+    return;
+}
 
         // =====================================================
         // JWT AUTHENTICATION

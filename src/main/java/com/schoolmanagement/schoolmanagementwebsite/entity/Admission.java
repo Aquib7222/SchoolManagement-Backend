@@ -1,5 +1,7 @@
 package com.schoolmanagement.schoolmanagementwebsite.entity;
 
+import java.time.LocalDate;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.schoolmanagement.schoolmanagementwebsite.enums.AdmissionStatus;
 
@@ -99,6 +101,8 @@ public class Admission {
     @Column(nullable = false)
     private AdmissionStatus status; // ✅ HERE
 
+    @Column(name = "cancel_date")
+private LocalDate cancelDate;
     
 
 }

@@ -15,6 +15,12 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 
     List<Admission> findBySchool_Id(Long schoolId);
 
+     Optional<Admission> findBySchoolIdAndAdmissionNumber(
+            Long schoolId,
+            String admissionNumber
+    );
+    
+
     long countBySchool_Id(Long schoolId);
 
     Optional<Admission> findByAdmissionNumberAndSchoolId(String admissionNumber, Long schoolId);

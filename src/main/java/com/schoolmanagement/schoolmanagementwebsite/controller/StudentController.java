@@ -2,6 +2,7 @@ package com.schoolmanagement.schoolmanagementwebsite.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,10 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.schoolmanagement.schoolmanagementwebsite.dto.SectionShufflingDTO;
+import com.schoolmanagement.schoolmanagementwebsite.dto.StudentBulkImportRequest;
 import com.schoolmanagement.schoolmanagementwebsite.dto.Student.RollNumberUpdateRequest;
 import com.schoolmanagement.schoolmanagementwebsite.entity.Student;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 import com.schoolmanagement.schoolmanagementwebsite.repository.StudentRepository;
+import com.schoolmanagement.schoolmanagementwebsite.service.StudentBulkImportService;
 import com.schoolmanagement.schoolmanagementwebsite.service.StudentService;
 
 import lombok.RequiredArgsConstructor;
@@ -35,6 +39,7 @@ public class StudentController {
 
     private final StudentService studentService;
     private final StudentRepository studentRepo;
+    private final StudentBulkImportService studentBulkImportService;
 
 //     @GetMapping
 // public List<Student> getAllStudents() {
@@ -237,6 +242,29 @@ public class StudentController {
 
         return ResponseEntity.ok(response);
     }
+
+
+    @PostMapping("/bulk-import")
+public ResponseEntity<?> bulkImportStudents(
+        @RequestBody StudentBulkImportRequest request) {
+
+    try {
+
+        Map<String, Object> response =
+                studentBulkImportService.importStudents(request);
+
+        return ResponseEntity.ok(response);
+
+    } catch (RuntimeException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(Map.of(
+                        "success", false,
+                        "message", e.getMessage()
+                ));
+    }
+}
 
     
     }

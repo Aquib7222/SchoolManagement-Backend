@@ -1,8 +1,11 @@
 package com.schoolmanagement.schoolmanagementwebsite.controller;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -65,6 +68,22 @@ public class AdmissionController {
         return ResponseEntity.ok(admissions);
     }
 
+    @GetMapping("/admission")
+public ResponseEntity<?> getAdmission(
+        @RequestParam Long schoolId,
+        @RequestParam String admissionNumber) {
+
+    Admission admission =
+            admissionService.getAdmissionBySchoolIdAndAdmissionNumber(
+                    schoolId,
+                    admissionNumber
+            );
+
+    return ResponseEntity.ok(admission);
+}
+
+
+
     // ---------------- UPDATE ADMISSION ----------------
     @PutMapping("/{id}")
     public ResponseEntity<Admission> updateAdmission(
@@ -81,6 +100,70 @@ public class AdmissionController {
         Admission admission = admissionService.getAdmissionById(id);
         return ResponseEntity.ok(admission);
     }
+
+    @PutMapping("/cancel")
+public ResponseEntity<?> cancelAdmission(
+        @RequestParam Long schoolId,
+        @RequestParam String admissionNumber
+) {
+
+    try {
+
+        admissionService.cancelAdmission(
+                schoolId,
+                admissionNumber
+        );
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "message", "Admission cancelled successfully",
+                        "admissionNumber", admissionNumber,
+                        "cancelDate", LocalDate.now().toString()
+                )
+        );
+
+    } catch (RuntimeException e) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        Map.of(
+                                "message", e.getMessage()
+                        )
+                );
+    }
+}
+
+    @PutMapping("/reapprove")
+public ResponseEntity<?> reApproveAdmission(
+        @RequestParam Long schoolId,
+        @RequestParam String admissionNumber
+) {
+    try {
+
+        admissionService.reApproveAdmission(
+                schoolId,
+                admissionNumber
+        );
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "message", "Admission re-approved successfully",
+                        "admissionNumber", admissionNumber
+                )
+        );
+
+    } catch (RuntimeException e) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        Map.of(
+                                "message", e.getMessage()
+                        )
+                );
+    }
+}
 
     // ---------------- DELETE ADMISSION ----------------
     // @DeleteMapping("/{id}")

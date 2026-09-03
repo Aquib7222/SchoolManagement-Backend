@@ -2,6 +2,7 @@ package com.schoolmanagement.schoolmanagementwebsite.dto;
 
 
 import lombok.*;
+import java.time.LocalDate;
 
 // @Data
 // public class AdmissionRequest {
@@ -115,4 +116,6 @@ public class AdmissionRequest {
 
     // 🔥 ADD THIS
     private Long schoolId;
+
+    private LocalDate cancelDate;
 }

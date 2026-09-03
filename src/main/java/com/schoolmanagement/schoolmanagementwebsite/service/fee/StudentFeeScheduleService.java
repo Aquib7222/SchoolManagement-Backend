@@ -1,3 +1,4 @@
+
 package com.schoolmanagement.schoolmanagementwebsite.service.fee;
 
 import java.time.LocalDate;
@@ -8,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.schoolmanagement.schoolmanagementwebsite.dto.fee.GenerateFeeRequest;
+import com.schoolmanagement.schoolmanagementwebsite.entity.StudentAdmissionFee;
 import com.schoolmanagement.schoolmanagementwebsite.entity.fee.StudentFee;
 import com.schoolmanagement.schoolmanagementwebsite.entity.fee.StudentFeeSchedule;
+import com.schoolmanagement.schoolmanagementwebsite.repository.StudentAdmissionFeeRepository;
 import com.schoolmanagement.schoolmanagementwebsite.repository.fee.StudentFeeRepository;
 import com.schoolmanagement.schoolmanagementwebsite.repository.fee.StudentFeeScheduleRepository;
 
@@ -23,139 +26,345 @@ public class StudentFeeScheduleService {
 
     private final StudentFeeScheduleRepository studentFeeScheduleRepository;
 
+    private final StudentAdmissionFeeRepository studentAdmissionFeeRepository;
+
+
+    // =========================================================
+    // GENERATE FEE
+    // =========================================================
+
     @Transactional
     public void generateFee(GenerateFeeRequest request) {
 
-        List<StudentFee> studentFees
-                = studentFeeRepository.findByAdmissionNumber(
-                        request.getAdmissionNumber());
+        List<StudentFee> studentFees =
+                studentFeeRepository.findByAdmissionNumber(
+                        request.getAdmissionNumber()
+                );
 
         if (studentFees.isEmpty()) {
             throw new RuntimeException("No Assigned Fee Found.");
         }
 
+
+        List<StudentAdmissionFee> admissionPayments =
+                studentAdmissionFeeRepository
+                        .findByAdmission_IdAndFeeType(
+                                request.getAdmissionId(),
+                                "MONTHLY"
+                        );
+
+
         for (var selectedSchedule : request.getSchedules()) {
 
-            StudentFee studentFee = studentFees.stream()
-                    .filter(f
-                            -> f.getFeeMasterId().equals(selectedSchedule.getFeeMasterId()))
-                    .findFirst()
-                    .orElse(null);
+            StudentFee studentFee =
+                    studentFees.stream()
+                            .filter(f ->
+                                    f.getFeeMasterId()
+                                            .equals(
+                                                    selectedSchedule
+                                                            .getFeeMasterId()
+                                            )
+                            )
+                            .findFirst()
+                            .orElse(null);
 
             if (studentFee == null) {
                 continue;
             }
 
-            boolean exists
-                    = studentFeeScheduleRepository.existsByStudentFeeIdAndMonth(
-                            studentFee.getId(),
-                            selectedSchedule.getMonth());
+
+            // =====================================================
+            // PREVENT DUPLICATE MONTH
+            // =====================================================
+
+            boolean exists =
+                    studentFeeScheduleRepository
+                            .existsByStudentFeeIdAndMonth(
+                                    studentFee.getId(),
+                                    selectedSchedule.getMonth()
+                            );
 
             if (exists) {
                 continue;
             }
 
-            StudentFeeSchedule schedule = new StudentFeeSchedule();
 
-            // ==========================
-            // Student Details
-            // ==========================
-            schedule.setSchoolId(studentFee.getSchoolId());
+            StudentFeeSchedule schedule =
+                    new StudentFeeSchedule();
 
-            schedule.setStudentId(studentFee.getStudentId());
 
-            schedule.setAdmissionNumber(studentFee.getAdmissionNumber());
+            // =====================================================
+            // STUDENT DETAILS
+            // =====================================================
 
-            schedule.setStudentName(studentFee.getStudentName());
+            schedule.setSchoolId(
+                    studentFee.getSchoolId()
+            );
 
-            schedule.setStudentClass(studentFee.getStudentClass());
+            schedule.setStudentId(
+                    studentFee.getStudentId()
+            );
 
-            schedule.setSection(studentFee.getSection());
+            schedule.setAdmissionNumber(
+                    studentFee.getAdmissionNumber()
+            );
 
-            schedule.setMobileNumber(studentFee.getMobileNumber());
+            schedule.setStudentName(
+                    studentFee.getStudentName()
+            );
 
-            schedule.setSession(studentFee.getSession());
+            schedule.setStudentClass(
+                    studentFee.getStudentClass()
+            );
 
-            // ==========================
-            // Fee Details
-            // ==========================
-            schedule.setStudentFeeId(studentFee.getId());
+            schedule.setSection(
+                    studentFee.getSection()
+            );
 
-            schedule.setFeeStructureId(studentFee.getFeeStructureId());
+            schedule.setMobileNumber(
+                    studentFee.getMobileNumber()
+            );
 
-            schedule.setFeeMasterId(studentFee.getFeeMasterId());
+            schedule.setSession(
+                    studentFee.getSession()
+            );
 
-            schedule.setFeeCode(studentFee.getFeeCode());
 
-            schedule.setFeeName(studentFee.getFeeName());
+            // =====================================================
+            // FEE DETAILS
+            // =====================================================
 
-            schedule.setFeeCategory(studentFee.getFeeCategory());
+            schedule.setStudentFeeId(
+                    studentFee.getId()
+            );
 
-            schedule.setFeeBatch(studentFee.getFeeBatch());
+            schedule.setFeeStructureId(
+                    studentFee.getFeeStructureId()
+            );
 
-            // ==========================
-            // Month
-            // ==========================
-            schedule.setMonth(selectedSchedule.getMonth());
+            schedule.setFeeMasterId(
+                    studentFee.getFeeMasterId()
+            );
 
-            // ==========================
-            // Amount
-            // ==========================
-            schedule.setAmount(selectedSchedule.getAmount());
+            schedule.setFeeCode(
+                    studentFee.getFeeCode()
+            );
 
-            schedule.setPaidAmount(0.0);
+            schedule.setFeeName(
+                    studentFee.getFeeName()
+            );
 
-            schedule.setDueAmount(selectedSchedule.getAmount());
-            schedule.setFineAmount(selectedSchedule.getAmount());
-            schedule.setDiscountAmount(selectedSchedule.getAmount());
+            schedule.setFeeCategory(
+                    studentFee.getFeeCategory()
+            );
 
-            schedule.setStatus("UNPAID");
+            schedule.setFeeBatch(
+                    studentFee.getFeeBatch()
+            );
 
-            schedule.setGenerateDate(LocalDate.now());
-            schedule.setPaymentDate(LocalDate.now());
 
-            schedule.setDueDate(getDueDate(selectedSchedule.getMonth()));
+            // =====================================================
+            // MONTH
+            // =====================================================
 
-            studentFeeScheduleRepository.save(schedule);
+            schedule.setMonth(
+                    selectedSchedule.getMonth()
+            );
+
+
+            // =====================================================
+            // AMOUNT
+            // =====================================================
+
+            double feeAmount =
+                    selectedSchedule.getAmount() == null
+                            ? 0.0
+                            : selectedSchedule.getAmount();
+
+
+            /*
+             * Find already paid amount for this month.
+             */
+            double paidAmount =
+                    admissionPayments.stream()
+
+                            .filter(payment ->
+                                    payment.getMonth() != null
+                                            && selectedSchedule
+                                                    .getMonth()
+                                                    .equalsIgnoreCase(
+                                                            payment.getMonth()
+                                                    )
+                            )
+
+                            .mapToDouble(payment ->
+                                    payment.getPaidAmount() == null
+                                            ? 0.0
+                                            : payment.getPaidAmount()
+                            )
+
+                            .sum();
+
+
+            // =====================================================
+            // DUE
+            // =====================================================
+
+            double dueAmount =
+                    Math.max(
+                            feeAmount - paidAmount,
+                            0.0
+                    );
+
+
+            schedule.setAmount(
+                    feeAmount
+            );
+
+            schedule.setPaidAmount(
+                    paidAmount
+            );
+
+            schedule.setDueAmount(
+                    dueAmount
+            );
+
+
+            // =====================================================
+            // FINE / DISCOUNT
+            // =====================================================
+
+            schedule.setFineAmount(
+                    0.0
+            );
+
+            schedule.setDiscountAmount(
+                    0.0
+            );
+
+
+            // =====================================================
+            // STATUS
+            // =====================================================
+
+            if (dueAmount <= 0) {
+
+                schedule.setStatus(
+                        "PAID"
+                );
+
+            } else if (paidAmount > 0) {
+
+                schedule.setStatus(
+                        "PARTIAL"
+                );
+
+            } else {
+
+                schedule.setStatus(
+                        "UNPAID"
+                );
+            }
+
+
+            // =====================================================
+            // DATES
+            // =====================================================
+
+            schedule.setGenerateDate(
+                    LocalDate.now()
+            );
+
+            schedule.setPaymentDate(
+                    paidAmount > 0
+                            ? LocalDate.now()
+                            : null
+            );
+
+            schedule.setDueDate(
+                    getDueDate(
+                            selectedSchedule.getMonth()
+                    )
+            );
+
+
+            studentFeeScheduleRepository.save(
+                    schedule
+            );
         }
     }
 
-     public List<StudentFeeSchedule> getAll(){
+
+    // =========================================================
+    // GET ALL
+    // =========================================================
+
+    public List<StudentFeeSchedule> getAll() {
+
         return studentFeeScheduleRepository.findAll();
     }
 
-    // ===========================
-    // Due Date
-    // ===========================
+
+    // =========================================================
+    // DUE DATE
+    // =========================================================
+
     private LocalDate getDueDate(String month) {
 
-        Month m = Month.valueOf(month.toUpperCase());
+        Month m =
+                Month.valueOf(
+                        month.toUpperCase()
+                );
 
-        int year = LocalDate.now().getYear();
+        int year =
+                LocalDate.now().getYear();
 
-        return LocalDate.of(year, m, 10);
+        return LocalDate.of(
+                year,
+                m,
+                10
+        );
     }
 
-    public List<StudentFeeSchedule> getStudentSchedule(String admissionNumber) {
+
+    // =========================================================
+    // STUDENT SCHEDULE
+    // =========================================================
+
+    public List<StudentFeeSchedule> getStudentSchedule(
+            String admissionNumber
+    ) {
 
         return studentFeeScheduleRepository
-                .findByAdmissionNumberOrderByMonthAsc(admissionNumber);
-
+                .findByAdmissionNumberOrderByMonthAsc(
+                        admissionNumber
+                );
     }
+
+
+    // =========================================================
+    // UNDO
+    // =========================================================
 
     @Transactional
     public void undoFee(List<Long> ids) {
 
-        studentFeeScheduleRepository.deleteAllById(ids);
-
+        studentFeeScheduleRepository
+                .deleteAllById(ids);
     }
 
-    public List<StudentFee> getNewSchedule(String admissionNumber) {
 
-        return studentFeeRepository.findByAdmissionNumber(admissionNumber);
+    // =========================================================
+    // NEW SCHEDULE
+    // =========================================================
 
-        
+    public List<StudentFee> getNewSchedule(
+            String admissionNumber
+    ) {
+
+        return studentFeeRepository
+                .findByAdmissionNumber(
+                        admissionNumber
+                );
     }
-   
-
 }

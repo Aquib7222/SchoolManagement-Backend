@@ -6,4 +6,5 @@ public enum AdmissionStatus {
     REJECTED,
     FEE_PAID,
     ENROLLED,
+    CANCELLED,
 }

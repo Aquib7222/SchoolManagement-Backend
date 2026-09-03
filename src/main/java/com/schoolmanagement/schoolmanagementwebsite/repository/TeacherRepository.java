@@ -42,5 +42,15 @@ Teacher findTeacherByEmployeeId(
         @Param("schoolId") Long schoolId
 );
     
+Optional<Teacher> findByIdAndSchoolId(
+            Long id,
+            Long schoolId);
+
+    long countBySchoolId(
+            Long schoolId);
+
+            List<Teacher> findBySchoolId(Long schoolId);
 
 }
+
+

@@ -11,6 +11,7 @@ public class GenerateFeeRequest {
 
     private String admissionNumber;
 
+    private Long admissionId;
     // private List<String> months;
 
     private List<GenerateScheduleDTO> schedules;

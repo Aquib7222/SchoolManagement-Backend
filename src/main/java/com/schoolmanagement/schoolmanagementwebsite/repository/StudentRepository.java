@@ -128,6 +128,26 @@ Optional<Student> findBySchool_IdAndEmail(
         String email
 );
     
+@Query("""
+    SELECT s
+    FROM Student s
+    WHERE s.school.id = :schoolId
+      AND s.academicYear = :academicYear
+      AND s.studentClass = :studentClass
+      AND (:section IS NULL OR :section = '' OR s.section = :section)
+      AND LOWER(s.transportRequired) = 'yes'
+    ORDER BY s.firstName ASC
+""")
+List<Student> findTransportStudents(
+        @Param("schoolId") Long schoolId,
+        @Param("academicYear") String academicYear,
+        @Param("studentClass") String studentClass,
+        @Param("section") String section
+);
+      boolean existsByAdmissionNumberAndSchoolId(
+            String admissionNumber,
+            Long schoolId
+    );
 
-      
+    
 }

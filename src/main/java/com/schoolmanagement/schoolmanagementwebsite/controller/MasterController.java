@@ -23,6 +23,7 @@ import com.schoolmanagement.schoolmanagementwebsite.enums.TeacherDesignation;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Assessment.AssessmentNature;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Assessment.ExamTermType;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Assessment.SubjectType;
+import com.schoolmanagement.schoolmanagementwebsite.enums.Enquiry.EnquiryStatus;
 import com.schoolmanagement.schoolmanagementwebsite.enums.School.AffiliationBoard;
 import com.schoolmanagement.schoolmanagementwebsite.enums.School.SchoolCategory;
 import com.schoolmanagement.schoolmanagementwebsite.enums.School.SchoolType;
@@ -124,5 +125,10 @@ public class MasterController {
         return AffiliationBoard.values();
     }
 
+
+    @GetMapping("/enquiry-status")
+    public EnquiryStatus[] getEnquiryStatus(){
+        return EnquiryStatus.values();
+    }
 
 }

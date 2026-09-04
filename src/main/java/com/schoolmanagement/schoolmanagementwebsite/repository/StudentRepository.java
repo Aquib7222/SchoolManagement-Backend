@@ -138,7 +138,7 @@ Optional<Student> findBySchool_IdAndEmail(
       AND LOWER(s.transportRequired) = 'yes'
     ORDER BY s.firstName ASC
 """)
-List<Student> findTransportStudents(
+List<Student> findTransportRequiredStudents(
         @Param("schoolId") Long schoolId,
         @Param("academicYear") String academicYear,
         @Param("studentClass") String studentClass,

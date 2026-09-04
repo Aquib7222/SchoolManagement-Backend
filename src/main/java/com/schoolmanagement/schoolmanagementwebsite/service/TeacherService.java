@@ -724,11 +724,12 @@ public class TeacherService {
                         + " "
                         + safe(teacher.getLastName())
         );
+        
 
         user.setEmail(
                 teacher.getEmail()
         );
-
+        user.setUsername(teacher.getEmail());
         user.setPhone(
                 teacher.getPhoneNumber()
         );

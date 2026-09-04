@@ -17,6 +17,7 @@ import com.schoolmanagement.schoolmanagementwebsite.enums.Month;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Standard;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Section;
 import com.schoolmanagement.schoolmanagementwebsite.enums.Sessions;
+import com.schoolmanagement.schoolmanagementwebsite.enums.Subject;
 import com.schoolmanagement.schoolmanagementwebsite.enums.TeacherCategory;
 import com.schoolmanagement.schoolmanagementwebsite.enums.TeacherDepartment;
 import com.schoolmanagement.schoolmanagementwebsite.enums.TeacherDesignation;
@@ -129,6 +130,11 @@ public class MasterController {
     @GetMapping("/enquiry-status")
     public EnquiryStatus[] getEnquiryStatus(){
         return EnquiryStatus.values();
+    }
+
+     @GetMapping("/subject")
+    public Subject[] getSubject(){
+        return Subject.values();
     }
 
 }

@@ -2,6 +2,7 @@ package com.schoolmanagement.schoolmanagementwebsite.controller.fee;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.schoolmanagement.schoolmanagementwebsite.dto.fee.FeeMasterDto;
@@ -20,30 +21,56 @@ public class FeeMasterController {
     }
 
     @PostMapping
-    public String save(@RequestBody FeeMasterDto dto) {
-        return service.save(dto);
+    public ResponseEntity<String> save(
+            @RequestParam Long schoolId,
+            @RequestBody FeeMasterDto dto) {
+
+        return ResponseEntity.ok(
+                service.save(schoolId, dto)
+        );
     }
 
     @GetMapping
-    public List<FeeMaster> getAll() {
-        return service.getAll();
+    public ResponseEntity<List<FeeMaster>> getAll(
+            @RequestParam Long schoolId) {
+
+        return ResponseEntity.ok(
+                service.getAll(schoolId)
+        );
     }
 
     @GetMapping("/{id}")
-    public FeeMaster getById(@PathVariable Long id) {
-        return service.getById(id);
+    public ResponseEntity<FeeMaster> getById(
+            @RequestParam Long schoolId,
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                service.getById(schoolId, id)
+        );
     }
 
     @PutMapping("/{id}")
-    public String update(
+    public ResponseEntity<String> update(
+            @RequestParam Long schoolId,
             @PathVariable Long id,
             @RequestBody FeeMasterDto dto) {
 
-        return service.update(id, dto);
+        return ResponseEntity.ok(
+                service.update(
+                        schoolId,
+                        id,
+                        dto
+                )
+        );
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id) {
-        return service.delete(id);
+    public ResponseEntity<String> delete(
+            @RequestParam Long schoolId,
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                service.delete(schoolId, id)
+        );
     }
 }

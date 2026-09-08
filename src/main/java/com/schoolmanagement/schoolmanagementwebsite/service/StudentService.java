@@ -293,6 +293,38 @@ public class StudentService {
         return savedStudent;
     }
 
+    public Student getLoggedInStudent(
+        Long schoolId,
+        
+        String academicYear,
+        String admissionNumber
+) {
+
+    if (schoolId == null) {
+        throw new RuntimeException("School ID is required");
+    }
+
+    if (admissionNumber == null || admissionNumber.isBlank()) {
+        throw new RuntimeException("Admission number is required");
+    }
+
+    if (academicYear == null || academicYear.isBlank()) {
+        throw new RuntimeException("Academic year is required");
+    }
+
+    return studentRepository
+            .findBySchool_IdAndAcademicYearAndAdmissionNumber(
+                    schoolId,
+                    academicYear,
+                    admissionNumber
+            )
+            .orElseThrow(() ->
+                    new RuntimeException(
+                            "Student not found for current academic year"
+                    )
+            );
+}
+
     public void sectionShuffling(SectionShufflingDTO request) {
         List<Student> students = studentRepository.findBySchoolIdAndAdmissionNumberIn(request.getSchoolId(), request.getAdmissionNumber());
 

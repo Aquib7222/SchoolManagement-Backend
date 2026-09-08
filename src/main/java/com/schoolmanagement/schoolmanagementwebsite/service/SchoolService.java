@@ -1085,17 +1085,13 @@ public class SchoolService {
 
     @Autowired
     private SchoolRepository repo;
+    
 
-    // =========================================================
-    // UPLOAD DIRECTORY
-    // =========================================================
+    
 
     private static final String UPLOAD_DIR =
             "uploads/schools/";
 
-    // =========================================================
-    // CREATE SCHOOL
-    // =========================================================
 
     @Audit(
         module = "SCHOOL",

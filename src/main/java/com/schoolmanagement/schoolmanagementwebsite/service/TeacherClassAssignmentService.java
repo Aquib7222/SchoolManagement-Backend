@@ -229,7 +229,7 @@ public class TeacherClassAssignmentService {
                     item.getPeriodId()
             );
             assignment.setPeriodName(
-                    item.getPeriodName
+                    item.getPeriodName()
             );
 
             assignment.setStartTime(

@@ -28,6 +28,9 @@ public interface StudentFeeScheduleRepository
             Long studentFeeId,
             String month
     );
+
+    @Override
+    List<StudentFeeSchedule> findAll();
 //     List<StudentFeeSchedule> findByAll(String status);
 
 //     List<StudentFeeSchedule> findAll(String status);

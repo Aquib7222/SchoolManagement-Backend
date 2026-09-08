@@ -65,6 +65,117 @@
 // }
 
 
+// package com.schoolmanagement.schoolmanagementwebsite.security;
+
+// import com.schoolmanagement.schoolmanagementwebsite.service.JwtService;
+// import com.schoolmanagement.schoolmanagementwebsite.service.UserDetailsServiceImpl;
+
+// import jakarta.servlet.*;
+// import jakarta.servlet.http.*;
+
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+// import org.springframework.security.core.context.SecurityContextHolder;
+// import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+// import org.springframework.stereotype.Component;
+
+// import java.io.IOException;
+
+// @Component
+// public class JwtFilter extends GenericFilter {
+
+//     @Autowired
+//     JwtService jwtService;
+
+//     @Autowired
+//     UserDetailsServiceImpl userDetailsService;
+
+//     @Override
+//     public void doFilter(
+//             ServletRequest request,
+//             ServletResponse response,
+//             FilterChain chain
+//     ) throws IOException, ServletException {
+
+//         HttpServletRequest req = (HttpServletRequest) request;
+
+//         // =====================================================
+//         // ALLOW UPLOADED FILES WITHOUT JWT
+//         // =====================================================
+
+//         String requestUri = req.getRequestURI();
+
+// System.out.println("JWT FILTER REQUEST = " + requestUri);
+
+// if (requestUri.startsWith("/uploads/")) {
+
+//     System.out.println(
+//         "UPLOAD REQUEST BYPASSED JWT = " + requestUri
+//     );
+
+//     chain.doFilter(request, response);
+//     return;
+// }
+//  // WebSocket / SockJS requests should not go through JWT filter
+//     if (requestUri.startsWith("/ws")) {
+//         chain.doFilter(request, response);
+//         return;
+//     }
+
+//         // =====================================================
+//         // JWT AUTHENTICATION
+//         // =====================================================
+
+//         String authHeader = req.getHeader("Authorization");
+
+//         String token = null;
+//         String email = null;
+
+//         if (authHeader != null && authHeader.startsWith("Bearer ")) {
+
+//             token = authHeader.substring(7);
+
+//             try {
+//                 email = jwtService.extractEmail(token);
+//             } catch (Exception e) {
+//                 System.out.println("Invalid JWT token");
+//             }
+//         }
+
+//         if (
+//             email != null &&
+//             SecurityContextHolder
+//                     .getContext()
+//                     .getAuthentication() == null
+//         ) {
+
+//             var userDetails =
+//                     userDetailsService.loadUserByUsername(email);
+
+//             UsernamePasswordAuthenticationToken authToken =
+//                     new UsernamePasswordAuthenticationToken(
+//                             userDetails,
+//                             null,
+//                             userDetails.getAuthorities()
+//                     );
+
+//             authToken.setDetails(
+//                     new WebAuthenticationDetailsSource()
+//                             .buildDetails(req)
+//             );
+
+//             SecurityContextHolder
+//                     .getContext()
+//                     .setAuthentication(authToken);
+//         }
+
+//         chain.doFilter(request, response);
+//     }
+// }
+
+
+
+
 package com.schoolmanagement.schoolmanagementwebsite.security;
 
 import com.schoolmanagement.schoolmanagementwebsite.service.JwtService;
@@ -97,55 +208,101 @@ public class JwtFilter extends GenericFilter {
             FilterChain chain
     ) throws IOException, ServletException {
 
-        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletRequest req =
+                (HttpServletRequest) request;
+
+        String requestUri = req.getRequestURI();
+
+        System.out.println(
+                "JWT FILTER REQUEST = " + requestUri
+        );
 
         // =====================================================
         // ALLOW UPLOADED FILES WITHOUT JWT
         // =====================================================
 
-        String requestUri = req.getRequestURI();
+        if (requestUri.startsWith("/uploads/")) {
 
-System.out.println("JWT FILTER REQUEST = " + requestUri);
+            System.out.println(
+                    "UPLOAD REQUEST BYPASSED JWT = "
+                            + requestUri
+            );
 
-if (requestUri.startsWith("/uploads/")) {
+            chain.doFilter(request, response);
+            return;
+        }
 
-    System.out.println(
-        "UPLOAD REQUEST BYPASSED JWT = " + requestUri
-    );
+        // =====================================================
+        // ALLOW WEBSOCKET / SOCKJS WITHOUT JWT
+        // =====================================================
 
-    chain.doFilter(request, response);
-    return;
-}
+        if (requestUri.startsWith("/ws")) {
+
+            System.out.println(
+                    "WEBSOCKET REQUEST BYPASSED JWT = "
+                            + requestUri
+            );
+
+            chain.doFilter(request, response);
+            return;
+        }
+
+        // =====================================================
+        // ALLOW EMAIL OTP SEND WITHOUT JWT
+        // =====================================================
+
+        if (requestUri.equals("/api/email-otp/send") ||
+            requestUri.equals("/api/email-otp/verify")) {
+
+            System.out.println(
+                    "EMAIL OTP REQUEST BYPASSED JWT = "
+                            + requestUri
+            );
+
+            chain.doFilter(request, response);
+            return;
+        }
 
         // =====================================================
         // JWT AUTHENTICATION
         // =====================================================
 
-        String authHeader = req.getHeader("Authorization");
+        String authHeader =
+                req.getHeader("Authorization");
 
         String token = null;
         String email = null;
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        if (
+                authHeader != null &&
+                authHeader.startsWith("Bearer ")
+        ) {
 
             token = authHeader.substring(7);
 
             try {
-                email = jwtService.extractEmail(token);
+
+                email =
+                        jwtService.extractEmail(token);
+
             } catch (Exception e) {
-                System.out.println("Invalid JWT token");
+
+                System.out.println(
+                        "Invalid JWT token"
+                );
             }
         }
 
         if (
-            email != null &&
-            SecurityContextHolder
-                    .getContext()
-                    .getAuthentication() == null
+                email != null &&
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication() == null
         ) {
 
             var userDetails =
-                    userDetailsService.loadUserByUsername(email);
+                    userDetailsService
+                            .loadUserByUsername(email);
 
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(
@@ -163,6 +320,10 @@ if (requestUri.startsWith("/uploads/")) {
                     .getContext()
                     .setAuthentication(authToken);
         }
+
+        // =====================================================
+        // CONTINUE REQUEST
+        // =====================================================
 
         chain.doFilter(request, response);
     }

@@ -7,14 +7,13 @@ import com.schoolmanagement.schoolmanagementwebsite.entity.fee.FeeStructure;
 
 public interface FeeStructureService {
 
-    String save(FeeStructureDto dto);
+    String save(Long schoolId, FeeStructureDto dto);
 
-    List<FeeStructure> getAll();
+    List<FeeStructure> getAll(Long schoolId);
 
-    FeeStructure getById(Long id);
+    FeeStructure getById(Long schoolId, Long id);
 
-    String update(Long id, FeeStructureDto dto);
+    String update(Long schoolId, Long id, FeeStructureDto dto);
 
-    String delete(Long id);
-
+    String delete(Long schoolId, Long id);
 }

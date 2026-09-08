@@ -149,5 +149,11 @@ List<Student> findTransportRequiredStudents(
             Long schoolId
     );
 
+    List<Student> findBySchool_IdAndAcademicYearAndStudentClass(
+        Long schoolId,
+        String academicYear,
+        String studentClass
+);
+
     
 }

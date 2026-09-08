@@ -299,10 +299,13 @@ public class StudentFeeScheduleService {
     // GET ALL
     // =========================================================
 
-    public List<StudentFeeSchedule> getAll() {
+   public List<StudentFeeSchedule> getSchoolAll(Long schoolId) {
+    return studentFeeScheduleRepository.findBySchoolId(schoolId);
+}
 
-        return studentFeeScheduleRepository.findAll();
-    }
+public List<StudentFeeSchedule> getAll() {
+    return studentFeeScheduleRepository.findAll();
+}
 
 
     // =========================================================

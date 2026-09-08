@@ -16,39 +16,66 @@ public class FeeStructureController {
 
     private final FeeStructureService service;
 
-    public FeeStructureController(FeeStructureService service) {
+    public FeeStructureController(
+            FeeStructureService service) {
+
         this.service = service;
     }
 
     @PostMapping
-    public ResponseEntity<String> save(@RequestBody FeeStructureDto dto) {
+    public ResponseEntity<String> save(
+            @RequestParam Long schoolId,
+            @RequestBody FeeStructureDto dto) {
 
-        return ResponseEntity.ok(service.save(dto));
+        return ResponseEntity.ok(
+                service.save(schoolId, dto)
+        );
     }
 
     @GetMapping
-    public ResponseEntity<List<FeeStructure>> getAll() {
+    public ResponseEntity<List<FeeStructure>> getAll(
+            @RequestParam Long schoolId) {
 
-        return ResponseEntity.ok(service.getAll());
+        return ResponseEntity.ok(
+                service.getAll(schoolId)
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FeeStructure> getById(@PathVariable Long id) {
+    public ResponseEntity<FeeStructure> getById(
+            @RequestParam Long schoolId,
+            @PathVariable Long id) {
 
-        return ResponseEntity.ok(service.getById(id));
+        return ResponseEntity.ok(
+                service.getById(schoolId, id)
+        );
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> update(
+            @RequestParam Long schoolId,
             @PathVariable Long id,
             @RequestBody FeeStructureDto dto) {
 
-        return ResponseEntity.ok(service.update(id, dto));
+        return ResponseEntity.ok(
+                service.update(
+                        schoolId,
+                        id,
+                        dto
+                )
+        );
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
+    public ResponseEntity<String> delete(
+            @RequestParam Long schoolId,
+            @PathVariable Long id) {
 
-        return ResponseEntity.ok(service.delete(id));
+        return ResponseEntity.ok(
+                service.delete(
+                        schoolId,
+                        id
+                )
+        );
     }
 }

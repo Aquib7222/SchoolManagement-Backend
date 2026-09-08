@@ -23,6 +23,7 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "admission_number")
     private String admissionNumber;
 
     private String firstName;
@@ -72,6 +73,7 @@ public class Student {
     private String country;
     private String zip;
 
+    @Column(name = "academic_year")
     private String academicYear;
 
     private LocalDate discontinueDate;

@@ -266,6 +266,34 @@ public ResponseEntity<?> bulkImportStudents(
     }
 }
 
+@GetMapping("/me")
+public ResponseEntity<?> getLoggedInStudent(
+        @RequestParam Long schoolId,  
+        @RequestParam String academicYear,
+        @RequestParam String admissionNumber
+) {
+
+    try {
+
+        Student student = studentService.getLoggedInStudent(
+                schoolId, 
+                academicYear,
+                admissionNumber
+        );
+
+        return ResponseEntity.ok(student);
+
+    } catch (RuntimeException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(Map.of(
+                        "message",
+                        e.getMessage()
+                ));
+    }
+}
+
     
     }
             

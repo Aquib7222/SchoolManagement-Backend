@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.schoolmanagement.schoolmanagementwebsite.dto.fee.GenerateFeeRequest;
@@ -40,10 +41,22 @@ public class StudentFeeScheduleController {
     // Get Fee Schedule 
     // =====================================
 
-    @GetMapping("/all")
-    public ResponseEntity<List<StudentFeeSchedule>> getAll(){
-        return ResponseEntity.ok(studentFeeScheduleService.getAll());
-    }
+  @GetMapping("/all")
+public ResponseEntity<List<StudentFeeSchedule>> getSchoolAll(
+        @RequestParam Long schoolId) {
+
+    return ResponseEntity.ok(
+            studentFeeScheduleService.getSchoolAll(schoolId)
+    );
+}
+
+@GetMapping("/all-schools")
+public ResponseEntity<List<StudentFeeSchedule>> getAll() {
+
+    return ResponseEntity.ok(
+            studentFeeScheduleService.getAll()
+    );
+}
 
 
     // =====================================

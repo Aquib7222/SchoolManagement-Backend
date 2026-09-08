@@ -202,6 +202,14 @@ public class SecurityConfig {
                 .requestMatchers("/api/student-fee/**").permitAll()
                 .requestMatchers("/api/student/attendance/**").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
+                .requestMatchers("/api/email-otp/send").permitAll()
+                .requestMatchers("/api/email-otp/verify").permitAll()
+                .requestMatchers(
+    "/api/password-reset/send-otp",
+    "/api/password-reset/verify-otp",
+    "/api/password-reset/reset"
+).permitAll()
+                .requestMatchers("/ws/**").permitAll()
                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

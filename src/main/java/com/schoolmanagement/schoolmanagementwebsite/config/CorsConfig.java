@@ -64,7 +64,9 @@ public class CorsConfig {
                 "http://10.94.128.151:5173",
                 "http://localhost:4173",
                 "http://10.94.128.151:4173",
-                "http://10.199.123.151:5173"
+                "http://10.199.123.151:5173",
+                // Production - Vercel
+                "https://school-management-frontend-weld.vercel.app"
         ));
 
         configuration.setAllowedMethods(List.of(

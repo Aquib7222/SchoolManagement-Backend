@@ -5,9 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,7 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.schoolmanagement.schoolmanagementwebsite.security.JwtFilter;
 import com.schoolmanagement.schoolmanagementwebsite.service.UserDetailsServiceImpl;
-import org.springframework.security.config.Customizer;
 
 // // @Configuration
 // // public class SecurityConfig {
@@ -138,6 +136,7 @@ import org.springframework.security.config.Customizer;
 //         return http.build();
 //     }
 // }
+
 
 @Configuration
 public class SecurityConfig {

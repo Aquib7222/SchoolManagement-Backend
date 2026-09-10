@@ -429,9 +429,267 @@
 //     }
 // }
 
+// package com.schoolmanagement.schoolmanagementwebsite.service;
+
+// import com.google.api.client.auth.oauth2.Credential;
+// import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+// import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
+// import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+// import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+// import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+// import com.google.api.client.http.javanet.NetHttpTransport;
+// import com.google.api.client.json.gson.GsonFactory;
+// import com.google.api.client.util.store.FileDataStoreFactory;
+
+// import com.google.api.services.gmail.Gmail;
+// import com.google.api.services.gmail.GmailScopes;
+// import com.google.api.services.gmail.model.Message;
+
+// import jakarta.mail.Session;
+// import jakarta.mail.internet.InternetAddress;
+// import jakarta.mail.internet.MimeMessage;
+
+// import org.apache.commons.codec.binary.Base64;
+// import org.springframework.stereotype.Service;
+
+// import java.io.ByteArrayOutputStream;
+// import java.io.File;
+// import java.io.InputStream;
+// import java.io.InputStreamReader;
+// import java.util.Collections;
+// import java.util.List;
+// import java.util.Properties;
+
+// @Service
+// public class GmailApiService {
+
+//     private static final String APPLICATION_NAME =
+//             "ZYNTaks Education";
+
+//     private static final GsonFactory JSON_FACTORY =
+//             GsonFactory.getDefaultInstance();
+
+//     private static final List<String> SCOPES =
+//             Collections.singletonList(GmailScopes.GMAIL_SEND);
+
+//     private static final String CREDENTIALS_FILE_PATH =
+//             "/credentials.json";
+
+//     private Gmail getGmailService() throws Exception {
+
+//         final NetHttpTransport httpTransport =
+//                 GoogleNetHttpTransport.newTrustedTransport();
+
+//         InputStream inputStream =
+//                 GmailApiService.class
+//                         .getResourceAsStream(CREDENTIALS_FILE_PATH);
+
+//         if (inputStream == null) {
+//             throw new RuntimeException(
+//                     "credentials.json not found in src/main/resources"
+//             );
+//         }
+
+//         GoogleClientSecrets clientSecrets =
+//                 GoogleClientSecrets.load(
+//                         JSON_FACTORY,
+//                         new InputStreamReader(inputStream)
+//                 );
+
+//         // Always use project root/tokens
+//         File tokenDirectory =
+//                 new File(
+//                         System.getProperty("user.dir"),
+//                         "tokens"
+//                 );
+
+//         System.out.println(
+//                 "GMAIL TOKEN DIRECTORY = "
+//                         + tokenDirectory.getAbsolutePath()
+//         );
+
+//         if (!tokenDirectory.exists()) {
+//             boolean created = tokenDirectory.mkdirs();
+
+//             System.out.println(
+//                     "TOKEN DIRECTORY CREATED = " + created
+//             );
+//         }
+
+//         GoogleAuthorizationCodeFlow flow =
+//                 new GoogleAuthorizationCodeFlow.Builder(
+//                         httpTransport,
+//                         JSON_FACTORY,
+//                         clientSecrets,
+//                         SCOPES
+//                 )
+//                         .setDataStoreFactory(
+//                                 new FileDataStoreFactory(
+//                                         tokenDirectory
+//                                 )
+//                         )
+//                         .setAccessType("offline")
+//                         .build();
+
+//         // First try existing credential
+//         Credential credential =
+//                 flow.loadCredential("user");
+
+//         System.out.println(
+//                 "GMAIL CREDENTIAL = " + credential
+//         );
+//         System.out.println("REFRESH TOKEN = " + credential.getRefreshToken());
+//         System.out.println(
+//         "REFRESH TOKEN EXISTS = "
+//                 + (credential != null
+//                 && credential.getRefreshToken() != null)
+// );
+
+//         // If credential does not exist, authorize ONCE
+//         if (credential == null) {
+
+//             System.out.println(
+//                     "=========================================="
+//             );
+
+//             System.out.println(
+//                     "GMAIL OAUTH AUTHORIZATION REQUIRED"
+//             );
+
+//             System.out.println(
+//                     "Opening Google authorization..."
+//             );
+
+//             System.out.println(
+//                     "=========================================="
+//             );
+            
+
+//             LocalServerReceiver receiver =
+//                     new LocalServerReceiver.Builder()
+//                             .setPort(8889)
+//                             .build();
+
+//             credential =
+//                     new AuthorizationCodeInstalledApp(
+//                             flow,
+//                             receiver
+//                     ).authorize("user");
+
+//             System.out.println(
+//                     "=========================================="
+//             );
+
+//             System.out.println(
+//                     "GMAIL OAUTH AUTHORIZATION SUCCESSFUL"
+//             );
+
+//             System.out.println(
+//                     "Credential saved in: "
+//                             + tokenDirectory.getAbsolutePath()
+//             );
+
+//             System.out.println(
+//                     "=========================================="
+//             );
+//         }
+
+//         // Refresh access token when required
+//         if (credential.getExpiresInSeconds() != null
+//                 && credential.getExpiresInSeconds() <= 60) {
+
+//             boolean refreshed =
+//                     credential.refreshToken();
+
+//             if (!refreshed) {
+//                 throw new RuntimeException(
+//                         "Unable to refresh Gmail OAuth token."
+//                 );
+//             }
+//         }
+
+//         return new Gmail.Builder(
+//                 httpTransport,
+//                 JSON_FACTORY,
+//                 credential
+//         )
+//                 .setApplicationName(APPLICATION_NAME)
+//                 .build();
+//     }
+
+//     public void sendEmail(
+//             String to,
+//             String subject,
+//             String body
+//     ) throws Exception {
+
+//         Gmail gmailService =
+//                 getGmailService();
+
+//         Properties properties =
+//                 new Properties();
+
+//         Session session =
+//                 Session.getInstance(
+//                         properties,
+//                         null
+//                 );
+
+//         MimeMessage email =
+//                 new MimeMessage(session);
+
+//         email.setFrom(
+//                 new InternetAddress(
+//                         "zyntakseducation@gmail.com"
+//                 )
+//         );
+
+//         email.addRecipient(
+//                 jakarta.mail.Message.RecipientType.TO,
+//                 new InternetAddress(to)
+//         );
+
+//         email.setSubject(subject);
+
+//         email.setText(body);
+
+//         ByteArrayOutputStream buffer =
+//                 new ByteArrayOutputStream();
+
+//         email.writeTo(buffer);
+
+//         byte[] rawMessageBytes =
+//                 buffer.toByteArray();
+
+//         String encodedEmail =
+//                 Base64.encodeBase64URLSafeString(
+//                         rawMessageBytes
+//                 );
+
+//         Message message =
+//                 new Message();
+
+//         message.setRaw(encodedEmail);
+
+//         gmailService
+//                 .users()
+//                 .messages()
+//                 .send("me", message)
+//                 .execute();
+
+//         System.out.println(
+//                 "GMAIL EMAIL SENT SUCCESSFULLY TO = "
+//                         + to
+//         );
+//     }
+// }
+
+
+
 package com.schoolmanagement.schoolmanagementwebsite.service;
 
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
@@ -480,13 +738,98 @@ public class GmailApiService {
         final NetHttpTransport httpTransport =
                 GoogleNetHttpTransport.newTrustedTransport();
 
+        // =====================================================
+        // PRODUCTION / RAILWAY
+        // =====================================================
+
+        String clientId =
+                System.getenv("GMAIL_CLIENT_ID");
+
+        String clientSecret =
+                System.getenv("GMAIL_CLIENT_SECRET");
+
+        String refreshToken =
+                System.getenv("GMAIL_REFRESH_TOKEN");
+
+        if (clientId != null
+                && !clientId.isBlank()
+                && clientSecret != null
+                && !clientSecret.isBlank()
+                && refreshToken != null
+                && !refreshToken.isBlank()) {
+
+            System.out.println(
+                    "GMAIL AUTH MODE = ENVIRONMENT VARIABLES"
+            );
+
+            GoogleClientSecrets clientSecrets =
+                    new GoogleClientSecrets();
+
+            clientSecrets.setInstalled(
+                    new GoogleClientSecrets.Details()
+                            .setClientId(clientId)
+                            .setClientSecret(clientSecret)
+            );
+
+            GoogleAuthorizationCodeFlow flow =
+                    new GoogleAuthorizationCodeFlow.Builder(
+                            httpTransport,
+                            JSON_FACTORY,
+                            clientSecrets,
+                            SCOPES
+                    ).build();
+
+            TokenResponse tokenResponse =
+                    new TokenResponse()
+                            .setRefreshToken(refreshToken);
+
+            Credential credential =
+                    flow.createAndStoreCredential(
+                            tokenResponse,
+                            "user"
+                    );
+
+            boolean refreshed =
+                    credential.refreshToken();
+
+            if (!refreshed) {
+                throw new RuntimeException(
+                        "Unable to refresh Gmail access token using GMAIL_REFRESH_TOKEN."
+                );
+            }
+
+            System.out.println(
+                    "GMAIL OAUTH TOKEN REFRESHED SUCCESSFULLY"
+            );
+
+            return new Gmail.Builder(
+                    httpTransport,
+                    JSON_FACTORY,
+                    credential
+            )
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+        }
+
+        // =====================================================
+        // LOCAL DEVELOPMENT
+        // =====================================================
+
+        System.out.println(
+                "GMAIL AUTH MODE = LOCAL CREDENTIALS"
+        );
+
         InputStream inputStream =
                 GmailApiService.class
-                        .getResourceAsStream(CREDENTIALS_FILE_PATH);
+                        .getResourceAsStream(
+                                CREDENTIALS_FILE_PATH
+                        );
 
         if (inputStream == null) {
             throw new RuntimeException(
-                    "credentials.json not found in src/main/resources"
+                    "credentials.json not found. " +
+                    "Set GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET " +
+                    "and GMAIL_REFRESH_TOKEN for production."
             );
         }
 
@@ -496,7 +839,6 @@ public class GmailApiService {
                         new InputStreamReader(inputStream)
                 );
 
-        // Always use project root/tokens
         File tokenDirectory =
                 new File(
                         System.getProperty("user.dir"),
@@ -509,10 +851,13 @@ public class GmailApiService {
         );
 
         if (!tokenDirectory.exists()) {
-            boolean created = tokenDirectory.mkdirs();
+
+            boolean created =
+                    tokenDirectory.mkdirs();
 
             System.out.println(
-                    "TOKEN DIRECTORY CREATED = " + created
+                    "TOKEN DIRECTORY CREATED = "
+                            + created
             );
         }
 
@@ -531,21 +876,18 @@ public class GmailApiService {
                         .setAccessType("offline")
                         .build();
 
-        // First try existing credential
         Credential credential =
                 flow.loadCredential("user");
 
         System.out.println(
-                "GMAIL CREDENTIAL = " + credential
+                "GMAIL CREDENTIAL EXISTS = "
+                        + (credential != null)
         );
-        System.out.println("REFRESH TOKEN = " + credential.getRefreshToken());
-        System.out.println(
-        "REFRESH TOKEN EXISTS = "
-                + (credential != null
-                && credential.getRefreshToken() != null)
-);
 
-        // If credential does not exist, authorize ONCE
+        // =====================================================
+        // LOCAL FIRST-TIME AUTHORIZATION
+        // =====================================================
+
         if (credential == null) {
 
             System.out.println(
@@ -563,7 +905,6 @@ public class GmailApiService {
             System.out.println(
                     "=========================================="
             );
-            
 
             LocalServerReceiver receiver =
                     new LocalServerReceiver.Builder()
@@ -585,16 +926,14 @@ public class GmailApiService {
             );
 
             System.out.println(
-                    "Credential saved in: "
-                            + tokenDirectory.getAbsolutePath()
-            );
-
-            System.out.println(
                     "=========================================="
             );
         }
 
-        // Refresh access token when required
+        // =====================================================
+        // LOCAL TOKEN REFRESH
+        // =====================================================
+
         if (credential.getExpiresInSeconds() != null
                 && credential.getExpiresInSeconds() <= 60) {
 
@@ -603,7 +942,7 @@ public class GmailApiService {
 
             if (!refreshed) {
                 throw new RuntimeException(
-                        "Unable to refresh Gmail OAuth token."
+                        "Unable to refresh local Gmail OAuth token."
                 );
             }
         }
@@ -616,6 +955,10 @@ public class GmailApiService {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
     }
+
+    // =========================================================
+    // SEND EMAIL
+    // =========================================================
 
     public void sendEmail(
             String to,
@@ -683,3 +1026,4 @@ public class GmailApiService {
         );
     }
 }
+

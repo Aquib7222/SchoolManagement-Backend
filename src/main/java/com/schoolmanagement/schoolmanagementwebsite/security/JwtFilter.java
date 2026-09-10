@@ -217,6 +217,19 @@ public class JwtFilter extends GenericFilter {
                 "JWT FILTER REQUEST = " + requestUri
         );
 
+
+    if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
+
+        System.out.println(
+                "CORS OPTIONS REQUEST BYPASSED JWT = "
+                        + requestUri
+        );
+
+        chain.doFilter(request, response);
+        return;
+    }
+
+
         // =====================================================
         // ALLOW UPLOADED FILES WITHOUT JWT
         // =====================================================

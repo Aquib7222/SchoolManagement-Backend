@@ -114,8 +114,8 @@ package com.schoolmanagement.schoolmanagementwebsite.service;
 import com.schoolmanagement.schoolmanagementwebsite.entity.EmailOtp;
 import com.schoolmanagement.schoolmanagementwebsite.repository.EmailOtpRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import com.schoolmanagement.schoolmanagementwebsite.service.GmailApiService;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -128,8 +128,8 @@ public class EmailOtpService {
     @Autowired
     private EmailOtpRepository emailOtpRepository;
 
-    @Autowired
-    private JavaMailSender mailSender;
+        @Autowired
+        private GmailApiService gmailApiService;
 
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile(
@@ -193,57 +193,50 @@ public class EmailOtpService {
         // -----------------------------------------
         // 5. Create Email
         // -----------------------------------------
+// -----------------------------------------
+// 5. Create Email
+// -----------------------------------------
 
-        SimpleMailMessage message =
-                new SimpleMailMessage();
+String subject =
+        "ZYNTaks Education - Email Verification OTP";
 
-        message.setTo(email);
+String body =
+        "Dear User,\n\n" +
+        "Thank you for using ZYNTaks Education.\n\n" +
+        "Your email verification OTP is:\n\n" +
+        "================================\n" +
+        "              " + otp + "\n" +
+        "================================\n\n" +
+        "This OTP is valid for 5 minutes.\n\n" +
+        "Please enter this OTP on the verification page " +
+        "to verify your email address.\n\n" +
+        "For security reasons, please do not share this OTP " +
+        "with anyone.\n\n" +
+        "If you did not request this verification, " +
+        "please ignore this email.\n\n" +
+        "Regards,\n" +
+        "ZYNTaks Education\n" +
+        "School Management System";
 
-        message.setSubject(
-                "ZYNTaks Education - Email Verification OTP"
-        );
+try {
 
-        // -----------------------------------------
-        // COMPLETE EMAIL MESSAGE
-        // -----------------------------------------
+    gmailApiService.sendEmail(
+            email,
+            subject,
+            body
+    );
 
-        message.setText(
-                "Dear User,\n\n" +
+} catch (Exception e) {
 
-                "Thank you for using ZYNTaks Education.\n\n" +
-
-                "Your email verification OTP is:\n\n" +
-
-                "================================\n" +
-                "              " + otp + "\n" +
-                "================================\n\n" +
-
-                "This OTP is valid for 5 minutes.\n\n" +
-
-                "Please enter this OTP on the verification page " +
-                "to verify your email address.\n\n" +
-
-                "For security reasons, please do not share this OTP " +
-                "with anyone.\n\n" +
-
-                "If you did not request this verification, " +
-                "please ignore this email.\n\n" +
-
-                "Regards,\n" +
-                "ZYNTaks Education\n" +
-                "School Management System"
-        );
-
-        // -----------------------------------------
-        // 6. Send Email
-        // -----------------------------------------
-
-        mailSender.send(message);
+    throw new RuntimeException(
+            "Failed to send OTP email: " + e.getMessage(),
+            e
+    );
+}
     }
 
-    // =====================================================
-    // VERIFY EMAIL OTP
-    // =====================================================
+
+   
 
     public boolean verifyOtp(String email, String otp) {
 

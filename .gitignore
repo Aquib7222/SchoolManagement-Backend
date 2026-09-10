@@ -35,3 +35,8 @@ build/
 uploads/
 *.log
 hs_err_pid*.log
+
+credentials.json
+tokens/
+
+gmail-refresh-token.txt

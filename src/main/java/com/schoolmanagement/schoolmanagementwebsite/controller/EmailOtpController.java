@@ -233,25 +233,28 @@ public class EmailOtpController {
 
             return ResponseEntity.ok(response);
 
-        } catch (Exception e) {
+       } catch (Exception e) {
 
-            Map<String, Object> response =
-                    new HashMap<>();
+    // IMPORTANT: backend terminal mein actual error dikhega
+    e.printStackTrace();
 
-            response.put(
-                    "success",
-                    false
-            );
+    Map<String, Object> response =
+            new HashMap<>();
 
-            response.put(
-                    "message",
-                    e.getMessage()
-            );
+    response.put(
+            "success",
+            false
+    );
 
-            return ResponseEntity
-                    .badRequest()
-                    .body(response);
-        }
+    response.put(
+            "message",
+            e.getMessage()
+    );
+
+    return ResponseEntity
+            .badRequest()
+            .body(response);
+}
     }
 
     // =====================================================

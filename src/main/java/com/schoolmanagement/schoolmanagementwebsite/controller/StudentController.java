@@ -3,6 +3,9 @@ package com.schoolmanagement.schoolmanagementwebsite.controller;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,16 +33,21 @@ import com.schoolmanagement.schoolmanagementwebsite.service.StudentBulkImportSer
 import com.schoolmanagement.schoolmanagementwebsite.service.StudentService;
 
 import lombok.RequiredArgsConstructor;
+import software.amazon.awssdk.core.ResponseBytes;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+
+import com.schoolmanagement.schoolmanagementwebsite.service.R2FileStorageService;
 
 @RestController
 @RequestMapping("/api/students")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+// @CrossOrigin(origins = "http://localhost:5173")
 public class StudentController {
 
     private final StudentService studentService;
     private final StudentRepository studentRepo;
     private final StudentBulkImportService studentBulkImportService;
+    private final R2FileStorageService r2FileStorageService;
 
 //     @GetMapping
 // public List<Student> getAllStudents() {
@@ -293,7 +301,38 @@ public ResponseEntity<?> getLoggedInStudent(
                 ));
     }
 }
+@GetMapping("/photo/{fileName}")
+public ResponseEntity<byte[]> getStudentPhoto(
+        @PathVariable String fileName
+) {
 
+    try {
+
+        ResponseBytes<GetObjectResponse> response =
+                r2FileStorageService.getStudentPhoto(fileName);
+
+        String contentType =
+                response.response().contentType();
+
+        if (contentType == null) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        return ResponseEntity
+                .ok()
+                .header(
+                        HttpHeaders.CONTENT_TYPE,
+                        contentType
+                )
+                .body(response.asByteArray());
+
+    } catch (Exception e) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .build();
+    }
+}
     
     }
             

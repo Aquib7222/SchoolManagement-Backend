@@ -38,6 +38,7 @@ public class StudentService {
     private final StudentRepository studentRepository;
     private final UserRepository userRepository;
     private final SchoolRepository schoolRepository;
+    private final R2FileStorageService r2FileStorageService;
 
     public List<Student> searchStudents(
             String email,
@@ -260,20 +261,11 @@ public class StudentService {
         //     student.setPhoto(request.getPhoto());
         if (photo != null && !photo.isEmpty()) {
 
-            String fileName = UUID.randomUUID() + "_" + photo.getOriginalFilename();
+    String fileName =
+            r2FileStorageService.uploadStudentPhoto(photo);
 
-            Path path = Paths.get("uploads/student");
-
-            Files.createDirectories(path);
-
-            Files.copy(
-                    photo.getInputStream(),
-                    path.resolve(fileName),
-                    StandardCopyOption.REPLACE_EXISTING
-            );
-
-            student.setPhoto(fileName);
-        }
+    student.setPhoto(fileName);
+}
 
         System.out.println("========== BEFORE SAVE ==========");
         System.out.println("Student First Name : " + student.getFirstName());

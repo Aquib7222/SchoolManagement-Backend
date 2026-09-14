@@ -19,14 +19,10 @@ public class BackupScheduler {
      *
      * Spring server timezone is explicitly set to Asia/Kolkata.
      */
-    // @Scheduled(
-    //         cron = "0 0 2 * * *",
-    //         zone = "Asia/Kolkata"
-    // )
     @Scheduled(
-        cron = "0 */5 * * * *",
-        zone = "Asia/Kolkata"
-)
+            cron = "0 0 2 * * *",
+            zone = "Asia/Kolkata"
+    )
     public void dailyBackup() {
 
         System.out.println(
